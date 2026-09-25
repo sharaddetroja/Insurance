@@ -2008,12 +2008,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- 8. DESIGN THEME & COHESIVE SYSTEM ---
   function initTheme() {
-    // Lock the application theme to Dark Mode
-    document.documentElement.setAttribute('data-theme', 'dark');
+    // Set default Light Theme
+    const savedTheme = localStorage.getItem('themeChoice') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
 
     // Accent Color Palette
-    const savedAccent = localStorage.getItem('accentChoice') || 'emerald';
+    const savedAccent = localStorage.getItem('accentChoice') || (savedTheme === 'light' ? 'sapphire' : 'emerald');
     setAccentTheme(savedAccent);
+
+    // Theme Toggle (Light / Dark)
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+        const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', nextTheme);
+        localStorage.setItem('themeChoice', nextTheme);
+        
+        // Re-render chart text colors
+        try { renderOverviewCharts(); } catch(e) {}
+        try { 
+          const analyticsTab = document.getElementById('analytics-tab');
+          if (analyticsTab && analyticsTab.classList.contains('active')) {
+            renderAnalyticsCharts();
+          }
+        } catch(e) {}
+      });
+    }
 
     const paletteBtn = document.getElementById('theme-palette-btn');
     const popover = document.getElementById('theme-color-popover');
