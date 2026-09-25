@@ -8,7 +8,7 @@
   <!-- Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
   <!-- Styling -->
   <link rel="stylesheet" href="styles.css">
@@ -292,6 +292,20 @@
       
       <!-- TAB 1: OVERVIEW -->
       <section id="overview-tab" class="tab-panel active">
+        <!-- Hero Section matching Reference Site Style -->
+        <div class="hero-section">
+          <div class="hero-content">
+            <h1>Vehicle Insurance Fraud Risk Intelligence</h1>
+            <p>Real-time machine learning analytics and claim risk assessment powered by gradient-boosted decision ensembles.</p>
+          </div>
+          <div class="hero-illustration">
+            <div class="pulse-ring"></div>
+            <div class="pulse-ring delay-1"></div>
+            <div class="pulse-ring delay-2"></div>
+            <i data-lucide="shield-alert" style="width: 52px; height: 52px; color: var(--primary); z-index: 2; position: relative;"></i>
+          </div>
+        </div>
+
         <!-- KPI Row -->
         <div class="kpi-grid">
           <div class="kpi-card">
@@ -669,16 +683,39 @@
             </div>
             
             <form id="predictor-form" class="predictor-form">
-              <!-- Model Selection Dropdown -->
-              <div class="form-group model-selection-group">
-                <div class="model-selection-label-row">
-                  <label for="pred-model-select">
+              <!-- Model Selection Cards Grid (Reference UI Style) -->
+              <div class="form-group" style="margin-bottom: 20px;">
+                <div class="model-selection-label-row" style="margin-bottom: 10px;">
+                  <label style="margin: 0; font-size: 12px; font-weight: 600; color: var(--text-secondary); display: flex; align-items: center; gap: 6px;">
                     <i data-lucide="cpu" style="width: 15px; height: 15px; color: var(--primary);"></i>
-                    Machine Learning Model Algorithm
+                    Select Machine Learning Model
                   </label>
-                  <span class="badge badge-primary-light" id="active-model-type-badge">Tuned Champion</span>
+                  <span class="badge badge-success-light" id="active-model-type-badge">Tuned Champion</span>
                 </div>
-                <select id="pred-model-select" class="select-input block model-select-highlight">
+                <div class="model-selection-grid" id="model-selection-cards">
+                  <div class="model-card selected" data-model="Gradient Boosting Classifier">
+                    <div class="model-card-header">
+                      <i data-lucide="cpu" class="model-icon"></i>
+                      <span class="model-title">Gradient Boost</span>
+                    </div>
+                    <p class="model-desc">Tuned 5-fold ensemble champion with optimal AUC-ROC.</p>
+                  </div>
+                  <div class="model-card" data-model="Random Forest Classifier">
+                    <div class="model-card-header">
+                      <i data-lucide="layers" class="model-icon"></i>
+                      <span class="model-title">Random Forest</span>
+                    </div>
+                    <p class="model-desc">Multi-tree bagging classifier for non-linear correlation.</p>
+                  </div>
+                  <div class="model-card" data-model="Logistic Regression">
+                    <div class="model-card-header">
+                      <i data-lucide="git-commit" class="model-icon"></i>
+                      <span class="model-title">Logistic Reg.</span>
+                    </div>
+                    <p class="model-desc">Standardized linear probability estimator with L2 penalty.</p>
+                  </div>
+                </div>
+                <select id="pred-model-select" class="select-input block model-select-highlight" style="display: none;">
                   <option value="Gradient Boosting Classifier" selected>Gradient Boosting Classifier (Champion - Tuned 5-Fold CV)</option>
                   <option value="Random Forest Classifier">Random Forest Classifier (Ensemble Bagging)</option>
                   <option value="Logistic Regression">Logistic Regression (Standardized Linear)</option>

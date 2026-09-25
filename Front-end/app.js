@@ -1576,6 +1576,26 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
+    // Model selection cards click listener
+    const modelCards = document.querySelectorAll('#model-selection-cards .model-card');
+    modelCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const modelName = card.getAttribute('data-model');
+        if (!modelName) return;
+
+        modelCards.forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+
+        const modelSelect = document.getElementById('pred-model-select');
+        if (modelSelect) {
+          modelSelect.value = modelName;
+        }
+
+        updateActiveModelBadges(modelName);
+        calculatePrediction();
+      });
+    });
+
     // Run initial compute
     calculatePrediction();
   }
@@ -1599,6 +1619,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (headerModelName) headerModelName.textContent = modelName;
     if (resultModelName) resultModelName.textContent = modelName;
+
+    // Sync model cards visual state
+    const modelCards = document.querySelectorAll('#model-selection-cards .model-card');
+    modelCards.forEach(card => {
+      if (card.getAttribute('data-model') === modelName) {
+        card.classList.add('selected');
+      } else {
+        card.classList.remove('selected');
+      }
+    });
 
     if (modelTypeBadge) {
       if (modelName.includes('Gradient Boosting')) {
