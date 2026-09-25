@@ -1556,13 +1556,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- 6. FRAUD RISK PREDICTOR ---
   function initPredictorForm() {
     const formInputs = [
-      'pred-severity', 'pred-hobby', 'pred-collision',
+      'pred-model-select', 'pred-severity', 'pred-hobby', 'pred-collision',
       'pred-age', 'pred-claim', 'pred-witnesses', 'pred-injuries',
       'pred-hour', 'pred-vehicles'
     ];
 
     formInputs.forEach(id => {
       const input = document.getElementById(id);
+      if (!input) return;
       
       // Real-time recalculation
       input.addEventListener('input', () => {
@@ -1586,6 +1587,36 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('val-claim').textContent = parseInt(value).toLocaleString();
     } else if (id === 'pred-hour') {
       document.getElementById('val-hour').textContent = `${String(value).padStart(2, '0')}:00`;
+    } else if (id === 'pred-model-select') {
+      updateActiveModelBadges(value);
+    }
+  }
+
+  function updateActiveModelBadges(modelName) {
+    const headerModelName = document.getElementById('header-active-model-name');
+    const resultModelName = document.getElementById('result-model-name-text');
+    const modelTypeBadge = document.getElementById('active-model-type-badge');
+
+    if (headerModelName) headerModelName.textContent = modelName;
+    if (resultModelName) resultModelName.textContent = modelName;
+
+    if (modelTypeBadge) {
+      if (modelName.includes('Gradient Boosting')) {
+        modelTypeBadge.textContent = 'Tuned Champion';
+        modelTypeBadge.className = 'badge badge-success-light';
+      } else if (modelName.includes('Random Forest')) {
+        modelTypeBadge.textContent = 'Ensemble Bagging';
+        modelTypeBadge.className = 'badge badge-warning-light';
+      } else if (modelName.includes('Logistic')) {
+        modelTypeBadge.textContent = 'Standardized Linear';
+        modelTypeBadge.className = 'badge badge-primary-light';
+      } else if (modelName.includes('AdaBoost')) {
+        modelTypeBadge.textContent = 'Adaptive Boosting';
+        modelTypeBadge.className = 'badge badge-primary-light';
+      } else if (modelName.includes('Decision Tree')) {
+        modelTypeBadge.textContent = 'Tree (depth=6)';
+        modelTypeBadge.className = 'badge badge-primary-light';
+      }
     }
   }
 
@@ -1599,6 +1630,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function runPredictionComputation() {
+    const modelSelectEl = document.getElementById('pred-model-select');
+    const selectedModelName = modelSelectEl ? modelSelectEl.value : 'Gradient Boosting Classifier';
+    updateActiveModelBadges(selectedModelName);
+
     const severity = document.getElementById('pred-severity').value;
     const hobby = document.getElementById('pred-hobby').value;
     const collision = document.getElementById('pred-collision').value;
@@ -1612,6 +1647,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let risk = 12.0;
     let factors = [];
     let usedBackend = false;
+    let modelUsedDisplay = selectedModelName;
 
     // Call Python ML Backend API
     try {
@@ -1627,7 +1663,8 @@ document.addEventListener('DOMContentLoaded', () => {
           witnesses: witnesses,
           bodily_injuries: injuries,
           incident_hour_of_the_day: hour,
-          number_of_vehicles_involved: vehicles
+          number_of_vehicles_involved: vehicles,
+          model_name: selectedModelName
         })
       });
 
@@ -1635,6 +1672,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = await response.json();
         risk = data.fraud_probability;
         factors = data.factors || [];
+        if (data.model_used) modelUsedDisplay = data.model_used;
         usedBackend = true;
       }
     } catch (e) {
@@ -1700,6 +1738,18 @@ document.addEventListener('DOMContentLoaded', () => {
         risk -= 5;
         factors.push({ name: 'Multiple Active Witnesses', value: '-5%', state: 'neg' });
       }
+
+      // Algorithm-specific fine-tuning
+      const mName = selectedModelName.toLowerCase();
+      if (mName.includes('random forest')) {
+        risk = risk * 1.03;
+      } else if (mName.includes('logistic')) {
+        risk = risk * 0.98;
+      } else if (mName.includes('decision tree')) {
+        risk = risk * 1.04;
+      } else if (mName.includes('adaboost')) {
+        risk = risk * 1.01;
+      }
     }
 
     // Restrain bounds
@@ -1709,8 +1759,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const fillRing = document.getElementById('gauge-fill-ring');
     const probVal = document.getElementById('gauge-probability-val');
     const badge = document.getElementById('gauge-risk-badge');
+    const statusTag = document.getElementById('result-model-status-tag');
 
     if (probVal) probVal.textContent = `${Math.round(risk)}%`;
+
+    if (statusTag) {
+      statusTag.textContent = usedBackend ? 'Live API ML' : 'Client-Side Engine';
+      statusTag.className = usedBackend ? 'badge badge-success-light' : 'badge badge-primary-light';
+    }
 
     if (fillRing) {
       const offset = 534 - (534 * risk) / 100;
@@ -1952,9 +2008,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- 8. DESIGN THEME & COHESIVE SYSTEM ---
   function initTheme() {
-    // Lock the application theme to Dark Mode to match the Vehicle Insurance Fraud Data visual spec
+    // Lock the application theme to Dark Mode
     document.documentElement.setAttribute('data-theme', 'dark');
-    localStorage.removeItem('themeChoice');
+
+    // Accent Color Palette
+    const savedAccent = localStorage.getItem('accentChoice') || 'emerald';
+    setAccentTheme(savedAccent);
+
+    const paletteBtn = document.getElementById('theme-palette-btn');
+    const popover = document.getElementById('theme-color-popover');
+    const colorDots = document.querySelectorAll('.color-dot-opt');
+
+    if (paletteBtn && popover) {
+      paletteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        popover.classList.toggle('open');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!popover.contains(e.target) && e.target !== paletteBtn) {
+          popover.classList.remove('open');
+        }
+      });
+    }
+
+    colorDots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        const theme = dot.getAttribute('data-color-theme');
+        setAccentTheme(theme);
+        localStorage.setItem('accentChoice', theme);
+        if (popover) popover.classList.remove('open');
+      });
+    });
+
+    function setAccentTheme(theme) {
+      document.documentElement.setAttribute('data-accent', theme);
+      colorDots.forEach(d => {
+        if (d.getAttribute('data-color-theme') === theme) {
+          d.classList.add('active');
+        } else {
+          d.classList.remove('active');
+        }
+      });
+    }
 
     // Settings Alert
     const settingsBtn = document.getElementById('btn-settings');
@@ -1970,7 +2066,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (helpBtn) {
       helpBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        alert('For help, contact the compliance support desk or read the Minitab documentation.');
+        alert('For help, contact the compliance support desk or read the documentation.');
       });
     }
   }

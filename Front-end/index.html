@@ -83,7 +83,7 @@
       <div class="floating-mock-card card-model-accuracy">
         <span class="mock-card-label">Model Accuracy</span>
         <div class="mock-card-value">89.4%</div>
-        <div class="mock-card-diff" style="color: var(--text-muted); font-size: 10px;">RandomForest Classifier</div>
+        <div class="mock-card-diff" style="color: #60a5fa; font-size: 10px; font-weight: 600;">Gradient Boosting Classifier</div>
       </div>
     </div>
     
@@ -237,6 +237,30 @@
       </div>
       
       <div class="header-right">
+        <!-- Active Model Pill -->
+        <div class="header-model-pill" id="header-model-pill" title="Current Active ML Model">
+          <i data-lucide="cpu" class="model-pill-icon"></i>
+          <span class="model-pill-label">Model:</span>
+          <span class="model-pill-name" id="header-active-model-name">Gradient Boosting</span>
+        </div>
+
+        <!-- Theme Color Picker Dropdown -->
+        <div class="theme-color-picker-wrap" id="theme-color-picker-wrap" title="Change Theme Accent Color">
+          <button class="header-icon-btn theme-palette-btn" id="theme-palette-btn" aria-label="Choose Accent Palette">
+            <i data-lucide="palette"></i>
+          </button>
+          <div class="theme-color-popover" id="theme-color-popover">
+            <span class="popover-title">Color Theme</span>
+            <div class="color-options-grid">
+              <button type="button" class="color-dot-opt active" data-color-theme="emerald" title="Emerald & Mint Fintech (Default)" style="background: linear-gradient(135deg, #10b981, #06b6d4);"></button>
+              <button type="button" class="color-dot-opt" data-color-theme="violet" title="Nebula Violet & Indigo" style="background: linear-gradient(135deg, #8b5cf6, #ec4899);"></button>
+              <button type="button" class="color-dot-opt" data-color-theme="sapphire" title="Electric Blue & Sapphire" style="background: linear-gradient(135deg, #3b82f6, #6366f1);"></button>
+              <button type="button" class="color-dot-opt" data-color-theme="amber" title="Sunset Amber & Crimson" style="background: linear-gradient(135deg, #f59e0b, #ef4444);"></button>
+              <button type="button" class="color-dot-opt" data-color-theme="cyberpunk" title="Neon Cyan & Lime" style="background: linear-gradient(135deg, #06b6d4, #84cc16);"></button>
+            </div>
+          </div>
+        </div>
+
         <!-- Theme Toggle button -->
         <button id="theme-toggle" class="header-icon-btn" aria-label="Toggle Theme">
           <i data-lucide="sun" class="sun-icon"></i>
@@ -645,6 +669,24 @@
             </div>
             
             <form id="predictor-form" class="predictor-form">
+              <!-- Model Selection Dropdown -->
+              <div class="form-group model-selection-group">
+                <div class="model-selection-label-row">
+                  <label for="pred-model-select">
+                    <i data-lucide="cpu" style="width: 15px; height: 15px; color: var(--primary);"></i>
+                    Machine Learning Model Algorithm
+                  </label>
+                  <span class="badge badge-primary-light" id="active-model-type-badge">Tuned Champion</span>
+                </div>
+                <select id="pred-model-select" class="select-input block model-select-highlight">
+                  <option value="Gradient Boosting Classifier" selected>Gradient Boosting Classifier (Champion - Tuned 5-Fold CV)</option>
+                  <option value="Random Forest Classifier">Random Forest Classifier (Ensemble Bagging)</option>
+                  <option value="Logistic Regression">Logistic Regression (Standardized Linear)</option>
+                  <option value="AdaBoost Classifier">AdaBoost Classifier (Adaptive Boosting)</option>
+                  <option value="Decision Tree Classifier">Decision Tree Classifier (max_depth=6)</option>
+                </select>
+              </div>
+
               <div class="form-group">
                 <label for="pred-severity">Incident Severity</label>
                 <select id="pred-severity" class="select-input block">
@@ -740,6 +782,20 @@
               <div class="card-header centered">
                 <h4 class="card-title">Risk Assessment Score</h4>
                 <p class="card-subtitle">Real-time fraud classification analysis</p>
+              </div>
+
+              <!-- Model Info Card -->
+              <div class="result-model-badge-card" id="result-model-badge-card">
+                <div class="result-model-badge-inner">
+                  <div class="result-model-icon-wrap">
+                    <i data-lucide="brain-circuit" class="result-model-icon"></i>
+                  </div>
+                  <div class="result-model-info">
+                    <span class="result-model-title">Classification Engine</span>
+                    <strong class="result-model-name" id="result-model-name-text">Gradient Boosting Classifier</strong>
+                  </div>
+                </div>
+                <span class="badge badge-success-light" id="result-model-status-tag">Active Model</span>
               </div>
               
               <!-- Circular Gauge -->
