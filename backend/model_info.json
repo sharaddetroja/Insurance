@@ -1,0 +1,248 @@
+{
+  "best_model": {
+    "name": "Gradient Boosting Classifier",
+    "type": "Ensemble (Gradient Boosted Trees)",
+    "tuned_parameters": {
+      "learning_rate": 0.1,
+      "max_depth": 3,
+      "n_estimators": 100,
+      "random_state": 42
+    },
+    "cv_f1_mean": 0.2103,
+    "cv_f1_std": 0.0247,
+    "accuracy": 0.7768,
+    "precision": 0.8462,
+    "recall": 0.1119,
+    "f1_score": 0.1976
+  },
+  "comparison": [
+    {
+      "model": "Gradient Boosting",
+      "train_accuracy": 0.7852,
+      "test_accuracy": 0.7768,
+      "precision": 0.8462,
+      "recall": 0.1119,
+      "f1_score": 0.1976,
+      "cv_f1_mean": 0.2103,
+      "cv_f1_std": 0.0247,
+      "fit_status": "Good fit",
+      "is_best": true
+    },
+    {
+      "model": "Random Forest",
+      "train_accuracy": 1.0,
+      "test_accuracy": 0.7776,
+      "precision": 0.9,
+      "recall": 0.1068,
+      "f1_score": 0.1909,
+      "cv_f1_mean": 0.2085,
+      "cv_f1_std": 0.022,
+      "fit_status": "Overfitting",
+      "is_best": false
+    },
+    {
+      "model": "Logistic Regression",
+      "train_accuracy": 0.7772,
+      "test_accuracy": 0.7759,
+      "precision": 0.8421,
+      "recall": 0.1085,
+      "f1_score": 0.1922,
+      "cv_f1_mean": 0.2077,
+      "cv_f1_std": 0.0195,
+      "fit_status": "Good fit",
+      "is_best": false
+    },
+    {
+      "model": "AdaBoost",
+      "train_accuracy": 0.7793,
+      "test_accuracy": 0.7776,
+      "precision": 0.9118,
+      "recall": 0.1051,
+      "f1_score": 0.1884,
+      "cv_f1_mean": 0.2026,
+      "cv_f1_std": 0.0206,
+      "fit_status": "Good fit",
+      "is_best": false
+    },
+    {
+      "model": "Decision Tree",
+      "train_accuracy": 0.7848,
+      "test_accuracy": 0.7743,
+      "precision": 0.8529,
+      "recall": 0.0983,
+      "f1_score": 0.1763,
+      "cv_f1_mean": 0.2034,
+      "cv_f1_std": 0.021,
+      "fit_status": "Good fit",
+      "is_best": false
+    }
+  ],
+  "confusion_matrix": {
+    "tn": 1799,
+    "fp": 12,
+    "fn": 524,
+    "tp": 66,
+    "total_test": 2401
+  },
+  "classification_report": {
+    "Not Fraud": {
+      "precision": 0.774429616874731,
+      "recall": 0.9933738266151297,
+      "f1-score": 0.8703434929850025,
+      "support": 1811.0
+    },
+    "Fraud": {
+      "precision": 0.8461538461538461,
+      "recall": 0.11186440677966102,
+      "f1-score": 0.19760479041916168,
+      "support": 590.0
+    },
+    "accuracy": 0.7767596834652228,
+    "macro avg": {
+      "precision": 0.8102917315142886,
+      "recall": 0.5526191166973954,
+      "f1-score": 0.533974141702082,
+      "support": 2401.0
+    },
+    "weighted avg": {
+      "precision": 0.7920544795464003,
+      "recall": 0.7767596834652228,
+      "f1-score": 0.7050307755698229,
+      "support": 2401.0
+    }
+  },
+  "top_features": [
+    {
+      "feature": "annual_income",
+      "importance": 0.7116,
+      "percentage": 71.16
+    },
+    {
+      "feature": "injury_claim",
+      "importance": 0.0508,
+      "percentage": 5.08
+    },
+    {
+      "feature": "total_claim",
+      "importance": 0.035,
+      "percentage": 3.5
+    },
+    {
+      "feature": "zip_code",
+      "importance": 0.0315,
+      "percentage": 3.15
+    },
+    {
+      "feature": "days_open",
+      "importance": 0.0281,
+      "percentage": 2.81
+    },
+    {
+      "feature": "age_of_driver",
+      "importance": 0.0252,
+      "percentage": 2.52
+    },
+    {
+      "feature": "safety_rating",
+      "importance": 0.0247,
+      "percentage": 2.47
+    },
+    {
+      "feature": "vehicle_price",
+      "importance": 0.0225,
+      "percentage": 2.25
+    },
+    {
+      "feature": "annual_premium",
+      "importance": 0.0164,
+      "percentage": 1.64
+    },
+    {
+      "feature": "liab_prct",
+      "importance": 0.0107,
+      "percentage": 1.07
+    },
+    {
+      "feature": "form_defects",
+      "importance": 0.0061,
+      "percentage": 0.61
+    },
+    {
+      "feature": "age_of_vehicle",
+      "importance": 0.0052,
+      "percentage": 0.52
+    },
+    {
+      "feature": "past_num_of_claims",
+      "importance": 0.0047,
+      "percentage": 0.47
+    },
+    {
+      "feature": "police_report",
+      "importance": 0.0035,
+      "percentage": 0.35
+    },
+    {
+      "feature": "vehicle_color_blue",
+      "importance": 0.0028,
+      "percentage": 0.28
+    }
+  ],
+  "feature_names": [
+    "age_of_driver",
+    "safety_rating",
+    "annual_income",
+    "high_education",
+    "address_change",
+    "zip_code",
+    "past_num_of_claims",
+    "liab_prct",
+    "police_report",
+    "age_of_vehicle",
+    "vehicle_price",
+    "total_claim",
+    "injury_claim",
+    "policy_deductible",
+    "annual_premium",
+    "days_open",
+    "form_defects",
+    "gender_M",
+    "marital_status_0",
+    "marital_status_1",
+    "property_status_Rent",
+    "claim_day_of_week_Friday",
+    "claim_day_of_week_Monday",
+    "claim_day_of_week_Saturday",
+    "claim_day_of_week_Sunday",
+    "claim_day_of_week_Thursday",
+    "claim_day_of_week_Tuesday",
+    "claim_day_of_week_Wednesday",
+    "accident_site_Local",
+    "accident_site_Parking Lot",
+    "witness_present_0",
+    "witness_present_1",
+    "channel_Online",
+    "channel_Phone",
+    "vehicle_category_Large",
+    "vehicle_category_Medium",
+    "vehicle_color_blue",
+    "vehicle_color_gray",
+    "vehicle_color_other",
+    "vehicle_color_red",
+    "vehicle_color_silver",
+    "vehicle_color_white"
+  ],
+  "dataset_summary": {
+    "total_records": 12002,
+    "fraud_count": 2951,
+    "not_fraud_count": 9051,
+    "fraud_rate_pct": 24.59,
+    "total_features": 42,
+    "train_size": 9601,
+    "test_size": 2401,
+    "train_ratio": "80%",
+    "test_ratio": "20%",
+    "cv_folds": 5
+  },
+  "last_trained": "2026-09-25 11:34:04"
+}

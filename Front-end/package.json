@@ -1,0 +1,13 @@
+{
+  "name": "front-end",
+  "version": "1.0.0",
+  "description": "Vehicle Insurance Fraud Intelligence Platform",
+  "main": "app.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0"
+  }
+}
