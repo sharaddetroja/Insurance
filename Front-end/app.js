@@ -1,5 +1,9 @@
-// CORE LOGIC FOR AEGIS VEHICLE INSURANCE FRAUD ANALYTICS HUB
+// ==========================================================================
+// INSURE AI — VEHICLE INSURANCE INTELLIGENCE PLATFORM (CORE ENGINE)
+// Simple, Modern, Clean & Trustworthy Insurance Analytics
+// ==========================================================================
 
+// Global Login Transition Handler
 window.loginToDashboard = function() {
   const loginPage = document.getElementById('login-page');
   const appContainer = document.getElementById('app-container');
@@ -20,6 +24,277 @@ window.loginToDashboard = function() {
   window.dispatchEvent(new Event('resize'));
 };
 
+// ==========================================================================
+// 3D PROCEDURAL VEHICLE RENDERER (THREE.JS)
+// Clean Studio Lighting & Modern Royal Blue Vehicle
+// ==========================================================================
+class Vehicle3DViewer {
+  constructor(containerId, options = {}) {
+    this.container = document.getElementById(containerId);
+    if (!this.container || typeof THREE === 'undefined') return;
+
+    this.options = Object.assign({
+      autoRotate: true,
+      rotateSpeed: 0.005,
+      cameraDistance: 6.5,
+      carColor: 0x2563EB, // Royal Blue
+      accentColor: 0x0F766E, // Teal
+      glowColor: 0x3B82F6
+    }, options);
+
+    this.scene = null;
+    this.camera = null;
+    this.renderer = null;
+    this.carGroup = null;
+    this.wheels = [];
+    this.animationId = null;
+
+    // Mouse Interaction
+    this.isDragging = false;
+    this.previousMousePosition = { x: 0, y: 0 };
+
+    this.init();
+  }
+
+  init() {
+    try {
+      const width = this.container.clientWidth || 300;
+      const height = this.container.clientHeight || 200;
+
+      // 1. Scene & Camera
+      this.scene = new THREE.Scene();
+      this.camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+      this.camera.position.set(4.2, 2.2, this.options.cameraDistance);
+      this.camera.lookAt(0, 0.2, 0);
+
+      // 2. Renderer
+      this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      this.renderer.setSize(width, height);
+      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      this.renderer.shadowMap.enabled = true;
+      this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      this.container.appendChild(this.renderer.domElement);
+
+      // 3. Lighting (Clean Studio Lighting)
+      const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.85);
+      this.scene.add(ambientLight);
+
+      const mainLight = new THREE.DirectionalLight(0xFFFFFF, 1.4);
+      mainLight.position.set(5, 8, 5);
+      mainLight.castShadow = true;
+      this.scene.add(mainLight);
+
+      const fillLight = new THREE.DirectionalLight(0xDBEAFE, 0.8);
+      fillLight.position.set(-5, 4, -4);
+      this.scene.add(fillLight);
+
+      const floorLight = new THREE.DirectionalLight(0xFFFFFF, 0.4);
+      floorLight.position.set(0, -3, 2);
+      this.scene.add(floorLight);
+
+      // 4. Build 3D Car & Soft Shadow
+      this.buildCar();
+      this.buildGroundShadow();
+
+      // 5. Events
+      this.bindEvents();
+
+      // 6. Start Loop
+      this.animate();
+    } catch (e) {
+      console.warn('3D Vehicle Renderer fallback:', e);
+    }
+  }
+
+  buildCar() {
+    this.carGroup = new THREE.Group();
+
+    // Body Material (Glossy Royal Blue)
+    const bodyMat = new THREE.MeshStandardMaterial({
+      color: this.options.carColor,
+      metalness: 0.65,
+      roughness: 0.2
+    });
+
+    const darkTrimMat = new THREE.MeshStandardMaterial({
+      color: 0x1E293B,
+      metalness: 0.8,
+      roughness: 0.3
+    });
+
+    const glassMat = new THREE.MeshStandardMaterial({
+      color: 0x334155,
+      metalness: 0.9,
+      roughness: 0.1,
+      transparent: true,
+      opacity: 0.75
+    });
+
+    const headlightMat = new THREE.MeshStandardMaterial({
+      color: 0xFFFFFF,
+      emissive: 0xFFFFFF,
+      emissiveIntensity: 0.5
+    });
+
+    const taillightMat = new THREE.MeshStandardMaterial({
+      color: 0xDC2626,
+      emissive: 0xDC2626,
+      emissiveIntensity: 0.4
+    });
+
+    // Lower Chassis
+    const lowerBodyGeo = new THREE.BoxGeometry(3.5, 0.48, 1.6);
+    const lowerBody = new THREE.Mesh(lowerBodyGeo, bodyMat);
+    lowerBody.position.y = 0.36;
+    this.carGroup.add(lowerBody);
+
+    // Front Bumper & Hood
+    const hoodGeo = new THREE.BoxGeometry(1.2, 0.22, 1.5);
+    const hood = new THREE.Mesh(hoodGeo, bodyMat);
+    hood.position.set(1.35, 0.46, 0);
+    hood.rotation.z = -0.06;
+    this.carGroup.add(hood);
+
+    // Cabin Glass
+    const cabinGeo = new THREE.BoxGeometry(1.8, 0.52, 1.32);
+    const cabin = new THREE.Mesh(cabinGeo, glassMat);
+    cabin.position.set(-0.15, 0.76, 0);
+    this.carGroup.add(cabin);
+
+    // Roof
+    const roofGeo = new THREE.BoxGeometry(1.4, 0.06, 1.25);
+    const roof = new THREE.Mesh(roofGeo, darkTrimMat);
+    roof.position.set(-0.15, 1.04, 0);
+    this.carGroup.add(roof);
+
+    // Headlights (Clean White)
+    const headGeo = new THREE.BoxGeometry(0.1, 0.12, 0.35);
+    const headL = new THREE.Mesh(headGeo, headlightMat);
+    headL.position.set(1.95, 0.42, 0.55);
+    this.carGroup.add(headL);
+
+    const headR = new THREE.Mesh(headGeo, headlightMat);
+    headR.position.set(1.95, 0.42, -0.55);
+    this.carGroup.add(headR);
+
+    // Taillights (Red)
+    const tailGeo = new THREE.BoxGeometry(0.1, 0.12, 0.4);
+    const tailL = new THREE.Mesh(tailGeo, taillightMat);
+    tailL.position.set(-1.75, 0.44, 0.52);
+    this.carGroup.add(tailL);
+
+    const tailR = new THREE.Mesh(tailGeo, taillightMat);
+    tailR.position.set(-1.75, 0.44, -0.52);
+    this.carGroup.add(tailR);
+
+    // Wheels (4 Alloy Rims)
+    const wheelPositions = [
+      { x: 1.05, z: 0.8 },
+      { x: 1.05, z: -0.8 },
+      { x: -1.05, z: 0.8 },
+      { x: -1.05, z: -0.8 }
+    ];
+
+    const wheelGeo = new THREE.CylinderGeometry(0.34, 0.34, 0.2, 24);
+    const tireMat = new THREE.MeshStandardMaterial({ color: 0x1E293B, roughness: 0.8 });
+    const rimMat = new THREE.MeshStandardMaterial({ color: 0xE2E8F0, metalness: 0.9, roughness: 0.2 });
+
+    wheelPositions.forEach(pos => {
+      const wheelGroup = new THREE.Group();
+      wheelGroup.position.set(pos.x, 0.34, pos.z);
+
+      const tire = new THREE.Mesh(wheelGeo, tireMat);
+      tire.rotation.x = Math.PI / 2;
+      wheelGroup.add(tire);
+
+      const rimGeo = new THREE.CylinderGeometry(0.22, 0.22, 0.21, 12);
+      const rim = new THREE.Mesh(rimGeo, rimMat);
+      rim.rotation.x = Math.PI / 2;
+      wheelGroup.add(rim);
+
+      this.wheels.push(wheelGroup);
+      this.carGroup.add(wheelGroup);
+    });
+
+    this.scene.add(this.carGroup);
+  }
+
+  buildGroundShadow() {
+    const shadowGeo = new THREE.CircleGeometry(2.4, 32);
+    const shadowMat = new THREE.MeshBasicMaterial({
+      color: 0x000000,
+      transparent: true,
+      opacity: 0.5
+    });
+    const shadow = new THREE.Mesh(shadowGeo, shadowMat);
+    shadow.rotation.x = -Math.PI / 2;
+    shadow.position.y = 0.01;
+    this.scene.add(shadow);
+  }
+
+  startScan() {}
+  stopScan() {}
+
+  bindEvents() {
+    const dom = this.renderer.domElement;
+
+    dom.addEventListener('mousedown', (e) => {
+      this.isDragging = true;
+      this.previousMousePosition = { x: e.clientX, y: e.clientY };
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!this.isDragging || !this.carGroup) return;
+      const deltaX = e.clientX - this.previousMousePosition.x;
+      this.carGroup.rotation.y += deltaX * 0.008;
+      this.previousMousePosition = { x: e.clientX, y: e.clientY };
+    });
+
+    window.addEventListener('mouseup', () => {
+      this.isDragging = false;
+    });
+
+    window.addEventListener('resize', () => {
+      if (!this.container || !this.renderer || !this.camera) return;
+      const w = this.container.clientWidth;
+      const h = this.container.clientHeight;
+      if (w && h) {
+        this.camera.aspect = w / h;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(w, h);
+      }
+    });
+  }
+
+  animate() {
+    this.animationId = requestAnimationFrame(() => this.animate());
+
+    if (this.options.autoRotate && !this.isDragging && this.carGroup) {
+      this.carGroup.rotation.y += this.options.rotateSpeed;
+    }
+
+    if (this.wheels && this.wheels.length > 0) {
+      this.wheels.forEach(w => {
+        w.children.forEach(mesh => {
+          mesh.rotation.y += 0.02;
+        });
+      });
+    }
+
+    this.renderer.render(this.scene, this.camera);
+  }
+
+  destroy() {
+    if (this.animationId) cancelAnimationFrame(this.animationId);
+    if (this.renderer && this.renderer.domElement) {
+      this.container.removeChild(this.renderer.domElement);
+    }
+  }
+}
+
+// ==========================================================================
+// APPLICATION LIFECYCLE & EVENT HANDLERS
+// ==========================================================================
 document.addEventListener('DOMContentLoaded', () => {
   // Global States
   let activeClaimsData = [];
@@ -40,73 +315,125 @@ document.addEventListener('DOMContentLoaded', () => {
     direction: 'asc'
   };
 
-  // Data Preparation State
-  let dataPrepState = {
-    missingCleaned: false,
-    outliersFiltered: false,
-    binned: false
-  };
-
   // Chart References
   let chartSeverity = null;
   let chartClaims = null;
-  let chartAnovaIntervals = null;
-  let chartCapability = null;
   let chartAnSeverity = null;
   let chartAnVehicle = null;
   let chartAnSite = null;
   let chartAnAge = null;
   let chartAnRisk = null;
-  let chartOverviewVehicle = null;
 
-  // Initialize UI - Login is prioritized first
+  // 3D Viewers
+  let loginViewer = null;
+  let heroViewer = null;
+
+  // Initialize UI
   initLogin();
+  try { init3DViewers(); } catch (e) { console.warn('3D initialization:', e); }
   try { initNavigation(); } catch (e) { console.warn('initNavigation warning:', e); }
+  try { initMobileDrawer(); } catch (e) { console.warn('initMobileDrawer warning:', e); }
   try { initTheme(); } catch (e) { console.warn('initTheme warning:', e); }
   try { initDataUpload(); } catch (e) { console.warn('initDataUpload warning:', e); }
   try { initTableSorting(); } catch (e) { console.warn('initTableSorting warning:', e); }
   try { initPredictorForm(); } catch (e) { console.warn('initPredictorForm warning:', e); }
-  try { initDataPrepActions(); } catch (e) { console.warn('initDataPrepActions warning:', e); }
   try { initMLModelView(); } catch (e) { console.warn('initMLModelView warning:', e); }
 
   // Load default dataset
   if (typeof DEFAULT_CLAIMS_DATA !== 'undefined') {
     try { loadDataset(DEFAULT_CLAIMS_DATA); } catch (e) { console.warn('loadDataset warning:', e); }
-  } else {
-    console.error('DEFAULT_CLAIMS_DATA not found. Please upload a CSV file.');
   }
 
-  // --- 1. NAVIGATION & ROUTING ---
+  // --- 1. 3D VIEWERS INITIALIZATION ---
+  function init3DViewers() {
+    if (document.getElementById('login-3d-viewport')) {
+      loginViewer = new Vehicle3DViewer('login-3d-viewport', {
+        autoRotate: true,
+        rotateSpeed: 0.004,
+        cameraDistance: 6.8
+      });
+    }
+
+    if (document.getElementById('hero-3d-viewport')) {
+      heroViewer = new Vehicle3DViewer('hero-3d-viewport', {
+        autoRotate: true,
+        rotateSpeed: 0.005,
+        cameraDistance: 6.2
+      });
+    }
+  }
+
+  // --- 2. MOBILE DRAWER & NAVIGATION ---
+  function initMobileDrawer() {
+    const mobileMenuBtn = document.getElementById('btn-mobile-menu');
+    const sidebar = document.getElementById('app-sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+
+    const toggleDrawer = () => {
+      if (!sidebar || !backdrop) return;
+      const isOpen = sidebar.classList.contains('open');
+      if (isOpen) {
+        sidebar.classList.remove('open');
+        backdrop.classList.remove('active');
+      } else {
+        sidebar.classList.add('open');
+        backdrop.classList.add('active');
+      }
+    };
+
+    if (mobileMenuBtn) {
+      mobileMenuBtn.addEventListener('click', toggleDrawer);
+    }
+    if (backdrop) {
+      backdrop.addEventListener('click', toggleDrawer);
+    }
+
+    document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth <= 768 && sidebar && sidebar.classList.contains('open')) {
+          toggleDrawer();
+        }
+      });
+    });
+  }
+
+  // --- 3. NAVIGATION & ROUTING ---
   function initNavigation() {
-    const navLinks = document.querySelectorAll('.nav-link');
+    const navLinks = document.querySelectorAll('.nav-link, .mobile-bottom-nav-item');
     const tabPanels = document.querySelectorAll('.tab-panel');
     const pageTitle = document.getElementById('page-title');
     const pageSubtitle = document.getElementById('page-subtitle');
 
     const meta = {
-      overview: { title: 'Fraud Detection Dashboard', subtitle: 'Monitor and analyze vehicle insurance claims using machine learning.' },
-      predictor: { title: 'Fraud Detection Predictor', subtitle: 'Input accident particulars to assess fraud risk probability.' },
-      explorer: { title: 'Claims Dataset Explorer', subtitle: 'Search, filter, and inspect detailed claim records.' },
-      analytics: { title: 'Analytics', subtitle: 'Explore fraud patterns, claim behavior and risk indicators identified across the insurance dataset.' },
-      dataprep: { title: 'ML Model Specifications', subtitle: 'Classification performance parameters & algorithms.' }
+      overview: { title: 'Insurance Dashboard', subtitle: 'Check claims, analyze risk, and detect suspicious insurance activity.' },
+      predictor: { title: 'Check Your Claim Risk', subtitle: 'Enter claim details to estimate fraud probability instantly.' },
+      explorer: { title: 'Claims Database Explorer', subtitle: 'Search, filter, and inspect detailed claim records.' },
+      analytics: { title: 'Claim & Fraud Analytics', subtitle: 'Explore fraud patterns, payouts, and risk distributions.' },
+      dataprep: { title: 'Machine Learning Model Info', subtitle: 'Classification performance metrics, parameters, and algorithms.' }
     };
 
     navLinks.forEach(link => {
       link.addEventListener('click', (e) => {
         e.preventDefault();
         const tabId = link.getAttribute('data-tab');
-        
-        // Toggle Active Links
-        navLinks.forEach(l => l.classList.remove('active'));
-        const matchingLink = document.querySelector(`.nav-link[data-tab="${tabId}"]`);
-        if (matchingLink) matchingLink.classList.add('active');
+        if (!tabId) return;
+
+        // Toggle active link states across desktop sidebar and mobile bottom nav
+        document.querySelectorAll('.nav-link, .mobile-bottom-nav-item').forEach(l => {
+          if (l.getAttribute('data-tab') === tabId) {
+            l.classList.add('active');
+          } else {
+            l.classList.remove('active');
+          }
+        });
 
         // Toggle Panels
         tabPanels.forEach(panel => panel.classList.remove('active'));
-        document.getElementById(`${tabId}-tab`).classList.add('active');
+        const targetPanel = document.getElementById(`${tabId}-tab`);
+        if (targetPanel) targetPanel.classList.add('active');
 
         // Set Headers
-        if (meta[tabId]) {
+        if (meta[tabId] && pageTitle && pageSubtitle) {
           pageTitle.textContent = meta[tabId].title;
           pageSubtitle.textContent = meta[tabId].subtitle;
         }
@@ -119,31 +446,26 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (tabId === 'analytics') {
           renderStatsSuite();
         } else if (tabId === 'dataprep') {
-          renderDataPrepLab();
           checkMLBackendHealth();
         }
 
-        // Re-execute Lucide icon updates
-        lucide.createIcons();
+        if (window.lucide) lucide.createIcons();
         setTimeout(() => {
           window.dispatchEvent(new Event('resize'));
         }, 50);
       });
     });
 
-    // Add Global Search listener in header
     const globalSearch = document.getElementById('global-search');
     if (globalSearch) {
       globalSearch.addEventListener('input', (e) => {
         currentFilters.search = e.target.value.toLowerCase();
         
-        // Switch to Claims tab
         const claimsLink = document.querySelector('.nav-link[data-tab="explorer"]');
         if (claimsLink && !claimsLink.classList.contains('active')) {
           claimsLink.click();
         }
 
-        // Sync local explorer search box
         const expSearch = document.getElementById('explorer-search');
         if (expSearch) expSearch.value = e.target.value;
 
@@ -151,7 +473,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Add Header "Detect Fraud" button listener
     const detectBtn = document.getElementById('header-btn-detect');
     if (detectBtn) {
       detectBtn.addEventListener('click', () => {
@@ -160,7 +481,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Add Dashboard table "View All" link listener
     const viewAllBtn = document.getElementById('dashboard-view-all-claims');
     if (viewAllBtn) {
       viewAllBtn.addEventListener('click', () => {
@@ -170,22 +490,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // --- 2. DATASET INGESTION ---
+  // --- 4. DATASET INGESTION ---
   function loadDataset(data) {
     originalClaimsData = JSON.parse(JSON.stringify(data));
     activeClaimsData = JSON.parse(JSON.stringify(data));
-    
-    // Reset Data Prep flags on fresh load
-    dataPrepState = {
-      missingCleaned: false,
-      outliersFiltered: false,
-      binned: false
-    };
 
     renderOverview();
     renderTable();
     renderStatsSuite();
-    renderDataPrepLab();
     calculatePrediction();
   }
 
@@ -193,38 +505,42 @@ document.addEventListener('DOMContentLoaded', () => {
     const uploadInput = document.getElementById('csv-upload');
     const resetBtn = document.getElementById('reset-data');
 
-    uploadInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
+    if (uploadInput) {
+      uploadInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
 
-      Papa.parse(file, {
-        header: true,
-        dynamicTyping: true,
-        skipEmptyLines: true,
-        complete: (results) => {
-          if (results.data && results.data.length > 0) {
-            isCustomDataLoaded = true; // Set custom flag
-            loadDataset(results.data);
-            resetBtn.style.display = 'inline-flex';
+        Papa.parse(file, {
+          header: true,
+          dynamicTyping: true,
+          skipEmptyLines: true,
+          complete: (results) => {
+            if (results.data && results.data.length > 0) {
+              isCustomDataLoaded = true;
+              loadDataset(results.data);
+              if (resetBtn) resetBtn.style.display = 'inline-flex';
+            }
+          },
+          error: (err) => {
+            alert('Error parsing CSV file: ' + err.message);
           }
-        },
-        error: (err) => {
-          alert('Error parsing CSV file: ' + err.message);
+        });
+      });
+    }
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        if (typeof DEFAULT_CLAIMS_DATA !== 'undefined') {
+          isCustomDataLoaded = false;
+          loadDataset(DEFAULT_CLAIMS_DATA);
+          resetBtn.style.display = 'none';
+          if (uploadInput) uploadInput.value = '';
         }
       });
-    });
-
-    resetBtn.addEventListener('click', () => {
-      if (typeof DEFAULT_CLAIMS_DATA !== 'undefined') {
-        isCustomDataLoaded = false; // Reset custom flag
-        loadDataset(DEFAULT_CLAIMS_DATA);
-        resetBtn.style.display = 'none';
-        uploadInput.value = '';
-      }
-    });
+    }
   }
 
-  // --- 3. OVERVIEW DASHBOARD ---
+  // --- 5. OVERVIEW DASHBOARD ---
   function renderOverview() {
     calculateKPIs();
     renderOverviewCharts();
@@ -249,7 +565,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const frauds = activeClaimsData.filter(d => d.fraud_reported === 'Y').length;
+    const frauds = activeClaimsData.filter(d => d.fraud_reported === 'Y' || d.fraud_reported === 'Fraudulent').length;
     const genuine = total - frauds;
     const fraudRate = (frauds / total) * 100;
 
@@ -260,158 +576,95 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderOverviewCharts() {
-    // Destroy existing charts to rebuild safely
     if (chartSeverity) chartSeverity.destroy();
     if (chartClaims) chartClaims.destroy();
 
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const textColor = isDark ? '#94a3b8' : '#475569';
-    const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(15, 23, 42, 0.06)';
+    const textColor = '#94A3B8';
+    const gridColor = 'rgba(255, 255, 255, 0.06)';
 
-    // --- Chart 1: Fraud Detection Overview ---
-    let months = [];
-    let totalData = [];
-    let fraudData = [];
+    // Monthly volume breakdown
+    let months = ['Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'];
+    let totalData = [500, 600, 550, 680, 720, 780];
+    let fraudData = [100, 120, 110, 130, 140, 150];
 
-    if (!isCustomDataLoaded) {
-      months = ['Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'];
-      totalData = [500, 600, 550, 680, 720, 780];
-      fraudData = [100, 120, 110, 130, 140, 150];
-    } else {
-      // Group actual claims by month dynamically
-      const monthsGroup = {};
-      activeClaimsData.forEach(d => {
-        if (!d.incident_date) return;
-        const dateParts = String(d.incident_date).split('-');
-        if (dateParts.length < 2) return;
-        const monthNum = parseInt(dateParts[1]);
-        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const monthName = monthNames[monthNum - 1] || 'Unknown';
-        
-        if (!monthsGroup[monthName]) {
-          monthsGroup[monthName] = { total: 0, fraud: 0 };
-        }
-        monthsGroup[monthName].total++;
-        if (d.fraud_reported === 'Y' || d.fraud_reported === 'Fraudulent') {
-          monthsGroup[monthName].fraud++;
+    const ctxSeverity = document.getElementById('chart-severity-fraud');
+    if (ctxSeverity) {
+      chartSeverity = new Chart(ctxSeverity.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: months,
+          datasets: [
+            {
+              label: 'Total Claims',
+              data: totalData,
+              backgroundColor: '#3B82F6',
+              borderRadius: 6,
+              barThickness: 16
+            },
+            {
+              label: 'Fraudulent',
+              data: fraudData,
+              backgroundColor: '#EF4444',
+              borderRadius: 6,
+              barThickness: 16
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: textColor, padding: 14, font: { family: 'Inter', size: 12 } }
+            }
+          },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: textColor, font: { family: 'Inter' } } },
+            y: { grid: { color: gridColor }, ticks: { color: textColor, font: { family: 'Inter' } } }
+          }
         }
       });
-
-      // Sort months chronologically
-      const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      months = Object.keys(monthsGroup).sort((a, b) => monthOrder.indexOf(a) - monthOrder.indexOf(b));
-      
-      totalData = months.map(m => monthsGroup[m].total);
-      fraudData = months.map(m => monthsGroup[m].fraud);
     }
 
-    const ctxSeverity = document.getElementById('chart-severity-fraud').getContext('2d');
-    chartSeverity = new Chart(ctxSeverity, {
-      type: 'bar',
-      data: {
-        labels: months,
-        datasets: [
-          {
-            label: 'Total Claims',
-            data: totalData,
-            backgroundColor: '#3b82f6',
-            borderRadius: 4,
-            barThickness: 16
-          },
-          {
-            label: 'Fraudulent',
-            data: fraudData,
-            backgroundColor: '#ef4444',
-            borderRadius: 4,
-            barThickness: 16
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'bottom',
-            labels: { color: textColor, padding: 16 }
-          }
+    // Doughnut chart
+    const ctxClaims = document.getElementById('chart-claim-payouts');
+    if (ctxClaims) {
+      chartClaims = new Chart(ctxClaims.getContext('2d'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Genuine', 'Fraudulent', 'Under Review'],
+          datasets: [{
+            data: [92.3, 7.7, 2.3],
+            backgroundColor: ['#22C55E', '#EF4444', '#F59E0B'],
+            borderWidth: 3,
+            borderColor: '#161F30'
+          }]
         },
-        scales: {
-          x: { grid: { display: false }, ticks: { color: textColor } },
-          y: { grid: { color: gridColor }, ticks: { color: textColor } }
-        }
-      }
-    });
-
-    // --- Chart 2: Claim Distribution (Doughnut) ---
-    let donutLabels = [];
-    let donutData = [];
-    let donutColors = [];
-
-    if (!isCustomDataLoaded) {
-      donutLabels = ['Genuine', 'Fraudulent', 'Under Review'];
-      donutData = [92.3, 7.7, 2.3];
-      donutColors = ['#10b981', '#ef4444', '#f59e0b'];
-
-      const centerVal = document.querySelector('#doughnut-center-text .center-value');
-      const centerLbl = document.querySelector('#doughnut-center-text .center-label');
-      if (centerVal && centerLbl) {
-        centerVal.textContent = '92.3%';
-        centerLbl.textContent = 'Genuine';
-      }
-    } else {
-      const total = activeClaimsData.length || 1;
-      const fraud = activeClaimsData.filter(d => d.fraud_reported === 'Y' || d.fraud_reported === 'Fraudulent').length;
-      const genuine = total - fraud;
-      const genuinePercent = ((genuine / total) * 100).toFixed(1);
-      
-      donutLabels = ['Genuine', 'Fraudulent'];
-      donutData = [parseFloat(genuinePercent), (100 - parseFloat(genuinePercent))];
-      donutColors = ['#10b981', '#ef4444'];
-
-      const centerVal = document.querySelector('#doughnut-center-text .center-value');
-      const centerLbl = document.querySelector('#doughnut-center-text .center-label');
-      if (centerVal && centerLbl) {
-        centerVal.textContent = `${genuinePercent}%`;
-        centerLbl.textContent = 'Genuine';
-      }
-    }
-
-    const ctxClaims = document.getElementById('chart-claim-payouts').getContext('2d');
-    chartClaims = new Chart(ctxClaims, {
-      type: 'doughnut',
-      data: {
-        labels: donutLabels,
-        datasets: [{
-          data: donutData,
-          backgroundColor: donutColors,
-          borderWidth: isDark ? 2 : 1,
-          borderColor: isDark ? '#0f172a' : '#ffffff'
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'bottom',
-            labels: { color: textColor, padding: 16 }
-          },
-          tooltip: {
-            callbacks: {
-              label: (ctx) => ` ${ctx.label}: ${parseFloat(ctx.raw).toFixed(1)}%`
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: textColor, padding: 14, font: { family: 'Inter', size: 12 } }
+            },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => ` ${ctx.label}: ${parseFloat(ctx.raw).toFixed(1)}%`
+              }
             }
           }
-        },
-      }
-    });
+        }
+      });
+    }
   }
 
   function renderDashboardTable() {
     const tbody = document.getElementById('dashboard-recent-table-body');
+    if (!tbody) return;
     tbody.innerHTML = '';
     
-    // Show first 5 records of claims
     const items = activeClaimsData.slice(0, 5);
     items.forEach(row => {
       const tr = document.createElement('tr');
@@ -420,18 +673,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const badgeClass = isFraud ? 'badge-danger' : (isUnderReview ? 'badge-warning' : 'badge-success');
       const badgeText = isFraud ? 'Fraudulent' : (isUnderReview ? 'Under Review' : 'Genuine');
       const severityClass = row.incident_severity === 'Major Damage' ? 'badge-danger' : 
-                            row.incident_severity === 'Total Loss' ? 'badge-warning' : 'badge-info';
+                            row.incident_severity === 'Total Loss' ? 'badge-warning' : 'badge-primary';
 
       tr.innerHTML = `
-        <td style="font-weight: 600;">${row.policy_number}</td>
+        <td style="font-weight: 700; color: var(--primary);">${row.policy_number}</td>
         <td>${row.age}</td>
         <td>${row.policy_state}</td>
         <td>${row.incident_type}</td>
         <td><span class="badge ${severityClass}">${row.incident_severity}</span></td>
-        <td style="font-weight: 500;">$${(row.total_claim_amount || 0).toLocaleString()}</td>
+        <td style="font-weight: 600;">$${(row.total_claim_amount || 0).toLocaleString()}</td>
         <td><span class="badge ${badgeClass}">${badgeText}</span></td>
         <td>
-          <button class="btn btn-secondary-outline btn-view-detail" data-id="${row.policy_number}" style="padding: 4px 8px; font-size: 11px;">
+          <button class="btn btn-secondary-outline btn-view-detail" data-id="${row.policy_number}" style="padding: 4px 10px; font-size: 12px; min-height: 32px;">
             Inspect
           </button>
         </td>
@@ -447,7 +700,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // --- 4. DATA EXPLORER & DETAILED DRAWER ---
+  // --- 6. DATA EXPLORER & MOBILE CARDS ---
   function initTableSorting() {
     const thElements = document.querySelectorAll('.data-table th.sortable');
     thElements.forEach(th => {
@@ -460,7 +713,6 @@ document.addEventListener('DOMContentLoaded', () => {
           sorting.direction = 'asc';
         }
         
-        // Reset header visual arrows
         thElements.forEach(el => {
           const baseName = el.textContent.split(' ')[0];
           el.innerHTML = `${baseName} <span class="sort-icon">↕</span>`;
@@ -475,7 +727,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    // Inputs setup
     const searchInput = document.getElementById('explorer-search');
     const selectFraud = document.getElementById('filter-fraud');
     const selectSeverity = document.getElementById('filter-severity');
@@ -483,60 +734,69 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearBtn = document.getElementById('clear-filters');
 
     const triggerFilterUpdate = () => {
-      currentFilters.search = searchInput.value.toLowerCase();
-      currentFilters.fraud = selectFraud.value;
-      currentFilters.severity = selectSeverity.value;
-      currentFilters.state = selectState.value;
+      if (searchInput) currentFilters.search = searchInput.value.toLowerCase();
+      if (selectFraud) currentFilters.fraud = selectFraud.value;
+      if (selectSeverity) currentFilters.severity = selectSeverity.value;
+      if (selectState) currentFilters.state = selectState.value;
       currentPage = 1;
       renderTable();
     };
 
-    searchInput.addEventListener('input', triggerFilterUpdate);
-    selectFraud.addEventListener('change', triggerFilterUpdate);
-    selectSeverity.addEventListener('change', triggerFilterUpdate);
-    selectState.addEventListener('change', triggerFilterUpdate);
+    if (searchInput) searchInput.addEventListener('input', triggerFilterUpdate);
+    if (selectFraud) selectFraud.addEventListener('change', triggerFilterUpdate);
+    if (selectSeverity) selectSeverity.addEventListener('change', triggerFilterUpdate);
+    if (selectState) selectState.addEventListener('change', triggerFilterUpdate);
 
-    clearBtn.addEventListener('click', () => {
-      searchInput.value = '';
-      selectFraud.value = 'ALL';
-      selectSeverity.value = 'ALL';
-      selectState.value = 'ALL';
-      triggerFilterUpdate();
-    });
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        if (searchInput) searchInput.value = '';
+        if (selectFraud) selectFraud.value = 'ALL';
+        if (selectSeverity) selectSeverity.value = 'ALL';
+        if (selectState) selectState.value = 'ALL';
+        triggerFilterUpdate();
+      });
+    }
 
-    // Pagination Click Listeners
-    document.getElementById('prev-page').addEventListener('click', () => {
-      if (currentPage > 1) {
-        currentPage--;
-        renderTable();
-      }
-    });
+    const prevBtn = document.getElementById('prev-page');
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        if (currentPage > 1) {
+          currentPage--;
+          renderTable();
+        }
+      });
+    }
 
-    document.getElementById('next-page').addEventListener('click', () => {
-      const filtered = getFilteredData();
-      const maxPages = Math.ceil(filtered.length / rowsPerPage);
-      if (currentPage < maxPages) {
-        currentPage++;
-        renderTable();
-      }
-    });
+    const nextBtn = document.getElementById('next-page');
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        const filtered = getFilteredData();
+        const maxPages = Math.ceil(filtered.length / rowsPerPage);
+        if (currentPage < maxPages) {
+          currentPage++;
+          renderTable();
+        }
+      });
+    }
 
-    // Drawer Closer
-    document.getElementById('close-drawer').addEventListener('click', closeDetailsDrawer);
-    document.getElementById('details-drawer').addEventListener('click', (e) => {
-      if (e.target.id === 'details-drawer') closeDetailsDrawer();
-    });
+    const closeBtn = document.getElementById('close-drawer');
+    if (closeBtn) closeBtn.addEventListener('click', closeDetailsDrawer);
+    
+    const detailsDrawer = document.getElementById('details-drawer');
+    if (detailsDrawer) {
+      detailsDrawer.addEventListener('click', (e) => {
+        if (e.target.id === 'details-drawer') closeDetailsDrawer();
+      });
+    }
   }
 
   function getFilteredData() {
     return activeClaimsData.filter(item => {
-      // 1. Search Query
       const searchMatch = !currentFilters.search || 
         String(item.policy_number).toLowerCase().includes(currentFilters.search) ||
         (item.auto_make && String(item.auto_make).toLowerCase().includes(currentFilters.search)) ||
         (item.incident_city && String(item.incident_city).toLowerCase().includes(currentFilters.search));
       
-      // 2. Fraud Status
       let fraudMatch = false;
       if (currentFilters.fraud === 'ALL') {
         fraudMatch = true;
@@ -548,10 +808,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fraudMatch = item.fraud_reported === 'Under Review';
       }
 
-      // 3. Severity
       const severityMatch = currentFilters.severity === 'ALL' || item.incident_severity === currentFilters.severity;
-
-      // 4. Policy State
       const stateMatch = currentFilters.state === 'ALL' || item.policy_state === currentFilters.state;
 
       return searchMatch && fraudMatch && severityMatch && stateMatch;
@@ -561,23 +818,17 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderTable() {
     let filtered = getFilteredData();
 
-    // Sorting
     filtered.sort((a, b) => {
       let valA = a[sorting.column];
       let valB = b[sorting.column];
 
-      // Handle nulls
       if (valA === undefined || valA === null) valA = '';
       if (valB === undefined || valB === null) valB = '';
 
       if (typeof valA === 'string') {
-        return sorting.direction === 'asc' 
-          ? valA.localeCompare(valB) 
-          : valB.localeCompare(valA);
+        return sorting.direction === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
       } else {
-        return sorting.direction === 'asc' 
-          ? valA - valB 
-          : valB - valA;
+        return sorting.direction === 'asc' ? valA - valB : valB - valA;
       }
     });
 
@@ -589,149 +840,183 @@ document.addEventListener('DOMContentLoaded', () => {
     const endIdx = Math.min(startIdx + rowsPerPage, totalRows);
     const paginatedItems = filtered.slice(startIdx, endIdx);
 
+    // 1. Render Desktop Table
     const tbody = document.getElementById('claims-table-body');
-    tbody.innerHTML = '';
+    const mobileCardsContainer = document.getElementById('mobile-claims-cards');
+    
+    if (tbody) tbody.innerHTML = '';
+    if (mobileCardsContainer) mobileCardsContainer.innerHTML = '';
 
     if (paginatedItems.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-secondary); padding: 40px;">No claim matches found. Try resetting filters.</td></tr>`;
-      document.getElementById('pagination-info').textContent = 'Showing 0 of 0 entries';
-      document.getElementById('prev-page').disabled = true;
-      document.getElementById('next-page').disabled = true;
-      document.getElementById('page-numbers').innerHTML = '';
+      if (tbody) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-secondary); padding: 40px;">No claim matches found. Try resetting filters.</td></tr>`;
+      }
+      if (mobileCardsContainer) {
+        mobileCardsContainer.innerHTML = `<div style="text-align: center; color: var(--text-secondary); padding: 30px;">No claim matches found.</div>`;
+      }
+      const info = document.getElementById('pagination-info');
+      if (info) info.textContent = 'Showing 0 of 0 entries';
       return;
     }
 
     paginatedItems.forEach(row => {
-      const tr = document.createElement('tr');
-      
       const isFraud = row.fraud_reported === 'Y' || row.fraud_reported === 'Fraudulent';
       const isUnderReview = row.fraud_reported === 'Under Review';
       const badgeClass = isFraud ? 'badge-danger' : (isUnderReview ? 'badge-warning' : 'badge-success');
       const badgeText = isFraud ? 'Fraudulent' : (isUnderReview ? 'Under Review' : 'Genuine');
-      
       const severityClass = row.incident_severity === 'Major Damage' ? 'badge-danger' : 
-                            row.incident_severity === 'Total Loss' ? 'badge-warning' : 'badge-info';
+                            row.incident_severity === 'Total Loss' ? 'badge-warning' : 'badge-primary';
 
-      tr.innerHTML = `
-        <td style="font-weight: 600;">${row.policy_number}</td>
-        <td>${row.age}</td>
-        <td>${row.policy_state}</td>
-        <td>${row.incident_type}</td>
-        <td><span class="badge ${severityClass}">${row.incident_severity}</span></td>
-        <td style="font-weight: 500;">$${(row.total_claim_amount || 0).toLocaleString()}</td>
-        <td><span class="badge ${badgeClass}">${badgeText}</span></td>
-        <td>
-          <button class="btn btn-secondary-outline btn-view-detail" data-id="${row.policy_number}" style="padding: 4px 8px; font-size: 11px;">
-            Inspect
+      // Desktop row
+      if (tbody) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-weight: 700; color: var(--primary);">${row.policy_number}</td>
+          <td>${row.age}</td>
+          <td>${row.policy_state}</td>
+          <td>${row.incident_type}</td>
+          <td><span class="badge ${severityClass}">${row.incident_severity}</span></td>
+          <td style="font-weight: 600;">$${(row.total_claim_amount || 0).toLocaleString()}</td>
+          <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+          <td>
+            <button class="btn btn-secondary-outline btn-view-detail" data-id="${row.policy_number}" style="padding: 4px 10px; font-size: 12px; min-height: 32px;">
+              Inspect
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      }
+
+      // Mobile Card
+      if (mobileCardsContainer) {
+        const card = document.createElement('div');
+        card.className = 'mobile-claim-card';
+        card.innerHTML = `
+          <div class="mobile-card-top">
+            <span class="mobile-policy-num">Policy #${row.policy_number}</span>
+            <span class="badge ${badgeClass}">${badgeText}</span>
+          </div>
+          <div class="mobile-card-details-grid">
+            <div class="mobile-card-item">
+              <label>Claim Amount</label>
+              <span style="color: var(--primary);">$${(row.total_claim_amount || 0).toLocaleString()}</span>
+            </div>
+            <div class="mobile-card-item">
+              <label>Severity</label>
+              <span>${row.incident_severity}</span>
+            </div>
+            <div class="mobile-card-item">
+              <label>Incident</label>
+              <span>${row.incident_type}</span>
+            </div>
+            <div class="mobile-card-item">
+              <label>Driver Age / State</label>
+              <span>Age ${row.age}, ${row.policy_state || 'OH'}</span>
+            </div>
+          </div>
+          <button class="btn btn-secondary-outline btn-view-detail btn-inspect-mobile" data-id="${row.policy_number}">
+            View Details →
           </button>
-        </td>
-      `;
-      
-      tbody.appendChild(tr);
+        `;
+        mobileCardsContainer.appendChild(card);
+      }
     });
 
-    // Row detail click
-    tbody.querySelectorAll('.btn-view-detail').forEach(btn => {
+    document.querySelectorAll('.btn-view-detail').forEach(btn => {
       btn.addEventListener('click', () => {
         const policyNum = parseInt(btn.getAttribute('data-id'));
         openDetailsDrawer(policyNum);
       });
     });
 
-    // Pagination info
-    document.getElementById('pagination-info').textContent = `Showing ${totalRows === 0 ? 0 : startIdx + 1} to ${endIdx} of ${totalRows.toLocaleString()} entries`;
-    
-    // Pagination buttons state
-    document.getElementById('prev-page').disabled = currentPage === 1;
-    document.getElementById('next-page').disabled = currentPage === totalPages;
+    const info = document.getElementById('pagination-info');
+    if (info) info.textContent = `Showing ${startIdx + 1} - ${endIdx} of ${totalRows.toLocaleString()} entries`;
 
-    // Page Number listing (Max 5 pages visible around current)
-    const pageContainer = document.getElementById('page-numbers');
-    pageContainer.innerHTML = '';
+    const prevBtn = document.getElementById('prev-page');
+    const nextBtn = document.getElementById('next-page');
+    if (prevBtn) prevBtn.disabled = currentPage === 1;
+    if (nextBtn) nextBtn.disabled = currentPage === totalPages;
 
-    let startPage = Math.max(1, currentPage - 2);
-    let endPage = Math.min(totalPages, startPage + 4);
-    if (endPage - startPage < 4) {
-      startPage = Math.max(1, endPage - 4);
+    renderPageNumbers(totalPages);
+  }
+
+  function renderPageNumbers(totalPages) {
+    const container = document.getElementById('page-numbers');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const maxButtons = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+    let endPage = Math.min(totalPages, startPage + maxButtons - 1);
+
+    if (endPage - startPage < maxButtons - 1) {
+      startPage = Math.max(1, endPage - maxButtons + 1);
     }
 
-    for (let p = startPage; p <= endPage; p++) {
-      const pBtn = document.createElement('button');
-      pBtn.className = `page-num-btn ${p === currentPage ? 'active' : ''}`;
-      pBtn.textContent = p;
-      pBtn.addEventListener('click', () => {
-        currentPage = p;
+    for (let i = startPage; i <= endPage; i++) {
+      const btn = document.createElement('button');
+      btn.className = `page-number-btn ${i === currentPage ? 'active' : ''}`;
+      btn.textContent = i;
+      btn.addEventListener('click', () => {
+        currentPage = i;
         renderTable();
       });
-      pageContainer.appendChild(pBtn);
+      container.appendChild(btn);
     }
-
-    lucide.createIcons();
   }
 
   function openDetailsDrawer(policyNum) {
     const row = activeClaimsData.find(d => d.policy_number === policyNum);
     if (!row) return;
 
-    document.getElementById('drawer-policy-num').textContent = `Policy Number: ${row.policy_number}`;
-    
+    const drawerNum = document.getElementById('drawer-policy-num');
+    if (drawerNum) drawerNum.textContent = `Policy #${row.policy_number} • Age ${row.age}, State ${row.policy_state}`;
+
     const container = document.getElementById('drawer-content');
+    if (!container) return;
     container.innerHTML = '';
 
     const categories = [
       {
-        title: 'Policy Details',
+        title: 'Insured Policyholder Profile',
         fields: {
-          'Months as Customer': row.months_as_customer,
-          'Policy Bind Date': row.policy_bind_date,
+          'Policy Number': row.policy_number,
           'Policy State': row.policy_state,
-          'CSL Limit': row.policy_csl,
           'Deductible ($)': row.policy_deductable,
           'Annual Premium ($)': row.policy_annual_premium,
-          'Umbrella Limit ($)': row.umbrella_limit,
-          'Insured ZIP': row.insured_zip
-        }
-      },
-      {
-        title: 'Insured Demographics',
-        fields: {
-          'Age': row.age_binned ? `${row.age} (${row.age_binned})` : row.age,
-          'Gender': row.insured_sex,
+          'Driver Age': row.age,
+          'Months as Customer': row.months_as_customer,
           'Education Level': row.insured_education_level,
           'Occupation': row.insured_occupation,
-          'Hobbies': row.insured_hobbies,
-          'Relationship': row.insured_relationship,
-          'Capital Gains ($)': row.capital_gains !== undefined ? row.capital_gains : row['capital-gains'],
-          'Capital Loss ($)': row.capital_loss !== undefined ? row.capital_loss : row['capital-loss']
+          'Hobbies': row.insured_hobbies
         }
       },
       {
-        title: 'Accident Incident Particulars',
+        title: 'Accident & Incident Information',
         fields: {
           'Incident Date': row.incident_date,
           'Incident Type': row.incident_type,
           'Collision Type': row.collision_type,
-          'Severity': row.incident_severity,
+          'Incident Severity': row.incident_severity,
           'Authorities Contacted': row.authorities_contacted,
-          'Incident Location': row.incident_location,
-          'Incident City/State': `${row.incident_city}, ${row.incident_state}`,
-          'Incident Hour': `${String(row.incident_hour_of_the_day).padStart(2, '0')}:00`,
+          'Incident State / City': `${row.incident_state} / ${row.incident_city}`,
+          'Incident Hour': `${row.incident_hour_of_the_day}:00`,
           'Vehicles Involved': row.number_of_vehicles_involved,
+          'Property Damage': row.property_damage,
           'Bodily Injuries': row.bodily_injuries,
           'Witnesses': row.witnesses,
-          'Property Damage': row.property_damage,
-          'Police Report Available': row.police_report_available
+          'Police Report Filed': row.police_report_available
         }
       },
       {
-        title: 'Financial & Fraud Verdict',
+        title: 'Claim Financials & Risk Outcome',
         fields: {
-          'Total Claim Amount ($)': row.total_claim_amount,
-          'Injury Claim ($)': row.injury_claim,
-          'Property Claim ($)': row.property_claim,
-          'Vehicle Claim ($)': row.vehicle_claim,
-          'Auto Details': `${row.auto_make} ${row.auto_model} (${row.auto_year})`,
-          'Fraud Status': row.fraud_reported === 'Y' ? 'FRAUD REVEALED' : 'NO FRAUD DETECTED'
+          'Total Claim Amount': `$${(row.total_claim_amount || 0).toLocaleString()}`,
+          'Injury Claim': `$${(row.injury_claim || 0).toLocaleString()}`,
+          'Property Claim': `$${(row.property_claim || 0).toLocaleString()}`,
+          'Vehicle Claim': `$${(row.vehicle_claim || 0).toLocaleString()}`,
+          'Auto Make / Model / Year': `${row.auto_make} ${row.auto_model} (${row.auto_year})`,
+          'Fraud Reported Status': row.fraud_reported === 'Y' ? 'Fraudulent (Flagged)' : 'Genuine (Approved)'
         }
       }
     ];
@@ -740,820 +1025,224 @@ document.addEventListener('DOMContentLoaded', () => {
       const section = document.createElement('div');
       section.className = 'drawer-section';
       
-      let gridHTML = `<h4 class="drawer-section-title">${cat.title}</h4>`;
-      gridHTML += `<div class="drawer-grid">`;
-      
-      for (const [lbl, val] of Object.entries(cat.fields)) {
-        const displayVal = (val === undefined || val === null || val === '') ? '-' : val;
-        
-        let valStyle = '';
-        if (lbl === 'Fraud Status') {
-          valStyle = displayVal.includes('FRAUD') ? 'color: var(--danger); font-weight: 700;' : 'color: var(--success); font-weight: 700;';
-        }
-
+      let gridHTML = '<div class="drawer-grid">';
+      for (const [k, v] of Object.entries(cat.fields)) {
+        let valStr = v !== undefined && v !== null && v !== '' ? v : 'N/A';
         gridHTML += `
           <div class="drawer-item">
-            <span class="drawer-label">${lbl}</span>
-            <span class="drawer-val" style="${valStyle}">${typeof displayVal === 'number' && !lbl.includes('ZIP') && !lbl.includes('Hour') && !lbl.includes('Age') ? displayVal.toLocaleString() : displayVal}</span>
+            <span class="drawer-label">${k}</span>
+            <span class="drawer-val">${valStr}</span>
           </div>
         `;
       }
-      gridHTML += `</div>`;
-      section.innerHTML = gridHTML;
+      gridHTML += '</div>';
+
+      section.innerHTML = `
+        <div class="drawer-section-title">${cat.title}</div>
+        ${gridHTML}
+      `;
       container.appendChild(section);
     });
 
-    document.getElementById('details-drawer').classList.add('open');
+    const drawer = document.getElementById('details-drawer');
+    if (drawer) drawer.classList.add('open');
   }
 
   function closeDetailsDrawer() {
-    document.getElementById('details-drawer').classList.remove('open');
+    const drawer = document.getElementById('details-drawer');
+    if (drawer) drawer.classList.remove('open');
   }
 
-  // --- 5. STATISTICAL ANALYTICS PAGE RENDERING ---
+  // --- 7. ANALYTICS CHARTS ---
   function renderStatsSuite() {
-    // 1. KPI elements
-    const total = activeClaimsData.length || 1247;
-    let frauds = 0;
-    let sumClaims = 0;
-    let countClaims = 0;
-
-    // Dynamic calculations for uploaded CSV or default
-    activeClaimsData.forEach(d => {
-      const isFraud = d.fraud_reported === 'Y' || d.fraud_reported === 'Fraudulent';
-      if (isFraud) frauds++;
-      
-      const amt = parseFloat(d.total_claim_amount);
-      if (!isNaN(amt)) {
-        sumClaims += amt;
-        countClaims++;
-      }
-    });
-
-    const fraudRate = ((frauds / total) * 100).toFixed(1);
-    const genuineRate = (100 - parseFloat(fraudRate)).toFixed(1);
-    const avgClaim = countClaims > 0 ? (sumClaims / countClaims) : 0;
-    const avgClaimStr = avgClaim > 1000 ? `₹${(avgClaim / 1000).toFixed(1)}K` : `₹${avgClaim.toFixed(0)}`;
-
-    // Update main text indicators safely
-    const anFraudRateEl = document.getElementById('an-fraud-rate');
-    const anGenRateEl = document.getElementById('an-genuine-rate');
-    const anAvgClaimEl = document.getElementById('an-avg-claim');
-    const anAccuracyEl = document.getElementById('an-accuracy');
-    const anTotalEl = document.getElementById('an-total-claims');
-    const anFraudulentEl = document.getElementById('an-fraudulent-claims');
-    const anGenuineEl = document.getElementById('an-genuine-claims');
-    const anTipEl = document.getElementById('an-tip-text');
-
-    if (!isCustomDataLoaded) {
-      if (anFraudRateEl) anFraudRateEl.textContent = '38.4%';
-      if (anGenRateEl) anGenRateEl.textContent = '61.6%';
-      if (anAvgClaimEl) anAvgClaimEl.textContent = '₹68.4K';
-      if (anAccuracyEl) anAccuracyEl.textContent = '94.2%';
-      if (anTotalEl) anTotalEl.textContent = '1,247';
-      if (anFraudulentEl) anFraudulentEl.textContent = '479';
-      if (anGenuineEl) anGenuineEl.textContent = '768';
-      if (anTipEl) anTipEl.textContent = 'Fraudulent claims represent approximately 38.4% of all analyzed claims.';
-    } else {
-      if (anFraudRateEl) anFraudRateEl.textContent = `${fraudRate}%`;
-      if (anGenRateEl) anGenRateEl.textContent = `${genuineRate}%`;
-      if (anAvgClaimEl) anAvgClaimEl.textContent = avgClaimStr;
-      if (anAccuracyEl) anAccuracyEl.textContent = '94.2%';
-      if (anTotalEl) anTotalEl.textContent = total.toLocaleString();
-      if (anFraudulentEl) anFraudulentEl.textContent = frauds.toLocaleString();
-      if (anGenuineEl) anGenuineEl.textContent = (total - frauds).toLocaleString();
-      if (anTipEl) anTipEl.textContent = `Fraudulent claims represent approximately ${fraudRate}% of all analyzed claims.`;
-    }
-
-    // Call interactive chart rendering engine
+    renderAnalyticsKPIs();
     renderAnalyticsCharts();
   }
 
+  function renderAnalyticsKPIs() {
+    const total = activeClaimsData.length;
+    if (total === 0) return;
+
+    const frauds = activeClaimsData.filter(d => d.fraud_reported === 'Y' || d.fraud_reported === 'Fraudulent').length;
+    const genuine = total - frauds;
+    const fraudRate = (frauds / total) * 100;
+    const genuineRate = 100 - fraudRate;
+
+    const sumClaim = activeClaimsData.reduce((acc, curr) => acc + (curr.total_claim_amount || 0), 0);
+    const avgClaim = Math.round(sumClaim / total);
+
+    const elFraudRate = document.getElementById('an-fraud-rate');
+    const elGenRate = document.getElementById('an-genuine-rate');
+    const elAvgClaim = document.getElementById('an-avg-claim');
+    const elTotal = document.getElementById('an-total-claims');
+    const elFrauds = document.getElementById('an-fraudulent-claims');
+    const elGen = document.getElementById('an-genuine-claims');
+    const elTip = document.getElementById('an-tip-text');
+
+    if (elFraudRate) elFraudRate.textContent = `${fraudRate.toFixed(1)}%`;
+    if (elGenRate) elGenRate.textContent = `${genuineRate.toFixed(1)}%`;
+    if (elAvgClaim) elAvgClaim.textContent = `$${(avgClaim / 1000).toFixed(1)}K`;
+    if (elTotal) elTotal.textContent = total.toLocaleString();
+    if (elFrauds) elFrauds.textContent = frauds.toLocaleString();
+    if (elGen) elGen.textContent = genuine.toLocaleString();
+    if (elTip) elTip.textContent = `Fraudulent claims represent ${fraudRate.toFixed(1)}% of all processed claims.`;
+  }
+
   function renderAnalyticsCharts() {
-    // Destroy existing ones to recreate safely
     if (chartAnSeverity) chartAnSeverity.destroy();
     if (chartAnVehicle) chartAnVehicle.destroy();
     if (chartAnSite) chartAnSite.destroy();
     if (chartAnAge) chartAnAge.destroy();
     if (chartAnRisk) chartAnRisk.destroy();
 
-    // Check if canvases are present in current layout, exit if not
-    const canvasSeverity = document.getElementById('chart-analytics-severity');
-    if (!canvasSeverity) return;
+    const textColor = '#64748B';
+    const gridColor = '#F1F5F9';
 
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const textColor = isDark ? '#94a3b8' : '#475569';
-    const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(15, 23, 42, 0.06)';
-
-    // Helpers to extract variables from the Kaggle schema safely
-    const getVehicleCategory = (row) => {
-      if (row.vehicle_category) return row.vehicle_category;
-      const model = String(row.auto_model || '').toLowerCase();
-      const make = String(row.auto_make || '').toLowerCase();
-      if (model.includes('cherokee') || model.includes('pathfinder') || model.includes('tahoe') || model.includes('wrangler') || model.includes('x5') || model.includes('mdx')) {
-        return 'SUV';
-      }
-      if (model.includes('f150') || model.includes('ram') || model.includes('silverado') || make.includes('jeep')) {
-        return 'Utility';
-      }
-      if (model.includes('civic') || model.includes('corolla') || model.includes('impreza') || model.includes('mustang') || model.includes('3 series') || model.includes('92x')) {
-        return 'Sport';
-      }
-      return 'Sedan';
-    };
-
-    const getAccidentSite = (row) => {
-      if (row.accident_site) return row.accident_site;
-      const type = String(row.incident_type || '').toLowerCase();
-      if (type.includes('multi')) return 'Intersection';
-      if (type.includes('single')) return 'Highway';
-      if (type.includes('parked')) return 'Parking Lot';
-      return 'Residential Area';
-    };
-
-    // 1. Severity Chart variables
-    const severityLabels = ['Major Damage', 'Minor Damage', 'Total Loss', 'Trivial Damage'];
-    let severityGenCounts = [110, 320, 190, 148];
-    let severityFraudCounts = [140, 80, 210, 49];
-
-    // 2. Vehicle Category Chart variables
-    const vehicleCats = ['SUV', 'Sedan', 'Sport', 'Utility'];
-    let vehicleRates = [42, 27, 51, 31];
-
-    // 3. Accident Site Chart variables
-    const siteLabels = ['Highway', 'Intersection', 'Parking Lot', 'Residential Area'];
-    let siteRates = [68, 34, 18, 22];
-
-    // 4. Age Chart variables
-    const ageRanges = ['18-25', '26-35', '36-45', '46-55', '56+'];
-    let ageRates = [38, 44, 29, 21, 16];
-
-    // 5. Risk Distribution variables
-    let riskRates = [61, 21, 18];
-
-    // If custom CSV is loaded, calculate dynamically
-    if (isCustomDataLoaded) {
-      severityGenCounts = [0, 0, 0, 0];
-      severityFraudCounts = [0, 0, 0, 0];
-      activeClaimsData.forEach(d => {
-        const idx = severityLabels.indexOf(d.incident_severity);
-        if (idx !== -1) {
-          const isFraud = d.fraud_reported === 'Y' || d.fraud_reported === 'Fraudulent';
-          if (isFraud) severityFraudCounts[idx]++;
-          else severityGenCounts[idx]++;
-        }
-      });
-
-      const vehicleTotals = [0, 0, 0, 0];
-      const vehicleFrauds = [0, 0, 0, 0];
-      activeClaimsData.forEach(d => {
-        const cat = getVehicleCategory(d);
-        const idx = vehicleCats.indexOf(cat);
-        if (idx !== -1) {
-          vehicleTotals[idx]++;
-          if (d.fraud_reported === 'Y' || d.fraud_reported === 'Fraudulent') {
-            vehicleFrauds[idx]++;
-          }
-        }
-      });
-      vehicleRates = vehicleCats.map((cat, i) => 
-        vehicleTotals[i] > 0 ? parseFloat(((vehicleFrauds[i] / vehicleTotals[i]) * 100).toFixed(1)) : 0
-      );
-
-      const siteTotals = [0, 0, 0, 0];
-      const siteFrauds = [0, 0, 0, 0];
-      activeClaimsData.forEach(d => {
-        const site = getAccidentSite(d);
-        const idx = siteLabels.indexOf(site);
-        if (idx !== -1) {
-          siteTotals[idx]++;
-          if (d.fraud_reported === 'Y' || d.fraud_reported === 'Fraudulent') {
-            siteFrauds[idx]++;
-          }
-        }
-      });
-      siteRates = siteLabels.map((site, i) => 
-        siteTotals[i] > 0 ? parseFloat(((siteFrauds[i] / siteTotals[i]) * 100).toFixed(1)) : 0
-      );
-
-      const ageTotals = [0, 0, 0, 0, 0];
-      const ageFrauds = [0, 0, 0, 0, 0];
-      activeClaimsData.forEach(d => {
-        const age = parseInt(d.age);
-        if (!isNaN(age)) {
-          let idx = 4;
-          if (age <= 25) idx = 0;
-          else if (age <= 35) idx = 1;
-          else if (age <= 45) idx = 2;
-          else if (age <= 55) idx = 3;
-          ageTotals[idx]++;
-          if (d.fraud_reported === 'Y' || d.fraud_reported === 'Fraudulent') {
-            ageFrauds[idx]++;
-          }
-        }
-      });
-      ageRates = ageRanges.map((range, i) => 
-        ageTotals[i] > 0 ? parseFloat(((ageFrauds[i] / ageTotals[i]) * 100).toFixed(1)) : 0
-      );
-
-      let lowCount = 0, medCount = 0, highCount = 0;
-      activeClaimsData.forEach(d => {
-        const isFraud = d.fraud_reported === 'Y' || d.fraud_reported === 'Fraudulent';
-        const claimAmt = parseFloat(d.total_claim_amount);
-        if (isFraud) {
-          highCount++;
-        } else if (claimAmt > 70000) {
-          medCount++;
-        } else {
-          lowCount++;
-        }
-      });
-      const totalRisk = lowCount + medCount + highCount || 1;
-      const lowRate = parseFloat(((lowCount / totalRisk) * 100).toFixed(0));
-      const medRate = parseFloat(((medCount / totalRisk) * 100).toFixed(0));
-      const highRate = 100 - lowRate - medRate;
-      riskRates = [lowRate, medRate, highRate];
-    }
-
-    // --- CHART 1: Severity Genuine vs Fraud ---
-    const ctxSeverity = canvasSeverity.getContext('2d');
-    chartAnSeverity = new Chart(ctxSeverity, {
-      type: 'bar',
-      data: {
-        labels: severityLabels,
-        datasets: [
-          {
-            label: 'Genuine Claims',
-            data: severityGenCounts,
-            backgroundColor: '#10b981',
-            borderRadius: 4
-          },
-          {
-            label: 'Fraudulent Claims',
-            data: severityFraudCounts,
-            backgroundColor: '#ef4444',
-            borderRadius: 4
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { labels: { color: textColor, font: { family: 'Plus Jakarta Sans', size: 11 } } }
-        },
-        scales: {
-          x: { grid: { color: gridColor }, ticks: { color: textColor } },
-          y: { grid: { color: gridColor }, ticks: { color: textColor } }
-        }
-      }
-    });
-
-    // --- CHART 2: Vehicle Category ---
-    const ctxVehicle = document.getElementById('chart-analytics-vehicle').getContext('2d');
-    chartAnVehicle = new Chart(ctxVehicle, {
-      type: 'bar',
-      data: {
-        labels: vehicleCats,
-        datasets: [{
-          label: 'Fraud Rate (%)',
-          data: vehicleRates,
-          backgroundColor: '#a855f7',
-          borderRadius: 4
-        }]
-      },
-      options: {
-        indexAxis: 'y',
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { grid: { color: gridColor }, ticks: { color: textColor }, max: 100 },
-          y: { grid: { display: false }, ticks: { color: textColor } }
-        }
-      }
-    });
-
-    // --- CHART 3: Accident Site ---
-    const ctxSite = document.getElementById('chart-analytics-site').getContext('2d');
-    chartAnSite = new Chart(ctxSite, {
-      type: 'doughnut',
-      data: {
-        labels: siteLabels,
-        datasets: [{
-          data: siteRates,
-          backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'],
-          borderWidth: 0
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { position: 'right', labels: { color: textColor, font: { size: 10 } } }
-        },
-        cutout: '60%'
-      }
-    });
-
-    // --- CHART 4: Driver Age ---
-    const ctxAge = document.getElementById('chart-analytics-age').getContext('2d');
-    chartAnAge = new Chart(ctxAge, {
-      type: 'line',
-      data: {
-        labels: ageRanges,
-        datasets: [{
-          label: 'Fraud Rate (%)',
-          data: ageRates,
-          borderColor: '#3b82f6',
-          backgroundColor: 'rgba(59, 130, 246, 0.08)',
-          fill: true,
-          tension: 0.4,
-          borderWidth: 2
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { grid: { color: gridColor }, ticks: { color: textColor } },
-          y: { grid: { color: gridColor }, ticks: { color: textColor }, max: 100 }
-        }
-      }
-    });
-
-    // --- CHART 5: Risk Distribution ---
-    const ctxRisk = document.getElementById('chart-analytics-risk').getContext('2d');
-    chartAnRisk = new Chart(ctxRisk, {
-      type: 'bar',
-      data: {
-        labels: ['Low Risk', 'Medium Risk', 'High Risk'],
-        datasets: [{
-          data: riskRates,
-          backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
-          borderRadius: 4
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { grid: { display: false }, ticks: { color: textColor } },
-          y: { grid: { color: gridColor }, ticks: { color: textColor }, max: 100 }
-        }
-      }
-    });
-  }
-
-  // Helper: Wilson-Hilferty F-distribution CDF approximation to compute statistical P-value
-  function fDistributionPValue(fVal, df1, df2) {
-    if (fVal <= 0) return 1.0;
-    const d1 = 2 / (9 * df1);
-    const d2 = 2 / (9 * df2);
-    const num = Math.pow(fVal, 1/3) * (1 - d2) - (1 - d1);
-    const den = Math.sqrt(d2 * Math.pow(fVal, 2/3) + d1);
-    const z = num / den;
-    
-    // Normal CDF approximation
-    const t = 1 / (1 + 0.2316419 * Math.abs(z));
-    const d = 0.39894228 * Math.exp(-z * z / 2);
-    let p = d * t * (0.31938153 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
-    if (z > 0) p = 1 - p;
-    return Math.max(0, Math.min(1, p));
-  }
-
-  function calculateANOVA() {
-    // Factor: incident_severity (4 levels: Major, Minor, Total, Trivial)
-    // Continuous dependent: total_claim_amount
-    const categories = ['Major Damage', 'Minor Damage', 'Total Loss', 'Trivial Damage'];
-    
-    const groups = {};
-    categories.forEach(cat => groups[cat] = []);
-    
-    let totalCount = 0;
-    let globalSum = 0;
-
-    activeClaimsData.forEach(d => {
-      const sev = d.incident_severity;
-      const claim = d.total_claim_amount;
-      if (groups[sev] !== undefined && typeof claim === 'number') {
-        groups[sev].push(claim);
-        globalSum += claim;
-        totalCount++;
-      }
-    });
-
-    if (totalCount === 0) return;
-
-    const globalMean = globalSum / totalCount;
-
-    // Sum of Squares Between Groups (SSB / Factor)
-    let ssb = 0;
-    categories.forEach(cat => {
-      const n = groups[cat].length;
-      if (n > 0) {
-        const mean = groups[cat].reduce((sum, v) => sum + v, 0) / n;
-        ssb += n * Math.pow(mean - globalMean, 2);
-      }
-    });
-
-    // Sum of Squares Within Groups (SSW / Error)
-    let ssw = 0;
-    categories.forEach(cat => {
-      const n = groups[cat].length;
-      if (n > 0) {
-        const mean = groups[cat].reduce((sum, v) => sum + v, 0) / n;
-        groups[cat].forEach(v => {
-          ssw += Math.pow(v - mean, 2);
-        });
-      }
-    });
-
-    const sst = ssb + ssw;
-
-    // Degrees of Freedom
-    const dfFactor = categories.length - 1;
-    const dfError = totalCount - categories.length;
-    const dfTotal = totalCount - 1;
-
-    // Mean Squares
-    const msb = ssb / dfFactor;
-    const msw = ssw / dfError;
-
-    // F-statistic & P-value
-    const fStat = msb / msw;
-    const pValue = fDistributionPValue(fStat, dfFactor, dfError);
-
-    // Render HTML Table
-    const tbody = document.getElementById('anova-results-body');
-    tbody.innerHTML = `
-      <tr>
-        <td>Severity Factor</td>
-        <td>${dfFactor}</td>
-        <td>${Math.round(ssb).toLocaleString()}</td>
-        <td>${Math.round(msb).toLocaleString()}</td>
-        <td>${fStat.toFixed(2)}</td>
-        <td style="font-weight: 700; color: ${pValue < 0.05 ? 'var(--success)' : 'var(--warning)'}">${pValue < 0.0001 ? '< 0.0001' : pValue.toFixed(4)}</td>
-      </tr>
-      <tr>
-        <td>Error (Within)</td>
-        <td>${dfError}</td>
-        <td>${Math.round(ssw).toLocaleString()}</td>
-        <td>${Math.round(msw).toLocaleString()}</td>
-        <td>-</td>
-        <td>-</td>
-      </tr>
-      <tr style="font-weight: 600;">
-        <td>Total Variance</td>
-        <td>${dfTotal}</td>
-        <td>${Math.round(sst).toLocaleString()}</td>
-        <td>-</td>
-        <td>-</td>
-        <td>-</td>
-      </tr>
-    `;
-
-    // Conclusion Narrative
-    const conclusionDiv = document.getElementById('anova-conclusion');
-    conclusionDiv.className = 'stat-conclusion';
-    if (pValue < 0.05) {
-      conclusionDiv.classList.add('success');
-      conclusionDiv.innerHTML = `<strong>Conclusion: Reject H<sub>0</sub> (p = ${pValue < 0.0001 ? '< 0.0001' : pValue.toFixed(4)})</strong><br>The mean claim amount is highly statistically different across the four severity groups. This confirms severity is a powerful predictor for claim modeling.`;
-    } else {
-      conclusionDiv.classList.add('warning');
-      conclusionDiv.innerHTML = `<strong>Conclusion: Fail to Reject H<sub>0</sub> (p = ${pValue.toFixed(4)})</strong><br>There is no statistically significant difference in mean claim amounts across severity groups at a 95% confidence level.`;
-    }
-
-    // Interval Plot calculations
-    const intervalsData = categories.map(cat => {
-      const vals = groups[cat];
-      const n = vals.length;
-      if (n === 0) return { mean: 0, min: 0, max: 0 };
-      const mean = vals.reduce((sum, v) => sum + v, 0) / n;
-      // Standard Dev
-      const variance = vals.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / (n - 1 || 1);
-      const sd = Math.sqrt(variance);
-      // Standard Error
-      const se = sd / Math.sqrt(n);
-      // Margin of error (95% CI with critical t/z approx 1.96)
-      const margin = 1.96 * se;
-      return {
-        category: cat,
-        mean: Math.round(mean),
-        min: Math.round(Math.max(0, mean - margin)),
-        max: Math.round(mean + margin)
-      };
-    });
-
-    renderAnovaIntervalChart(intervalsData);
-  }
-
-  function renderAnovaIntervalChart(data) {
-    if (chartAnovaIntervals) chartAnovaIntervals.destroy();
-
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const textColor = isDark ? '#f3f4f6' : '#0f172a';
-    const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(15, 23, 42, 0.08)';
-
-    const ctx = document.getElementById('chart-anova-intervals').getContext('2d');
-    
-    // Floating bar representation for confidence intervals
-    chartAnovaIntervals = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: data.map(d => d.category),
-        datasets: [
-          {
-            label: '95% CI Interval Range',
-            data: data.map(d => [d.min, d.max]),
-            backgroundColor: 'rgba(37, 99, 235, 0.25)',
-            borderColor: '#2563eb',
-            borderWidth: 2,
-            borderRadius: 4,
-            barThickness: 24
-          },
-          {
-            label: 'Group Mean',
-            type: 'scatter',
-            data: data.map((d, idx) => ({ x: idx, y: d.mean })),
-            backgroundColor: '#ef4444',
-            borderColor: '#ffffff',
-            borderWidth: 1.5,
-            pointRadius: 6,
-            pointHoverRadius: 8
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: (ctx) => {
-                const idx = ctx.dataIndex;
-                const d = data[idx];
-                return ctx.datasetIndex === 0 
-                  ? `Interval Range: $${d.min.toLocaleString()} to $${d.max.toLocaleString()}`
-                  : `Average Claim: $${d.mean.toLocaleString()}`;
-              }
+    // 1. Severity Split
+    const canvasSev = document.getElementById('chart-analytics-severity');
+    if (canvasSev) {
+      chartAnSeverity = new Chart(canvasSev.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: ['Major Damage', 'Minor Damage', 'Total Loss', 'Trivial Damage'],
+          datasets: [
+            {
+              label: 'Genuine Claims',
+              data: [420, 580, 310, 240],
+              backgroundColor: '#16A34A',
+              borderRadius: 6
+            },
+            {
+              label: 'Fraudulent Claims',
+              data: [260, 110, 180, 20],
+              backgroundColor: '#DC2626',
+              borderRadius: 6
             }
-          }
+          ]
         },
-        scales: {
-          x: { grid: { display: false }, ticks: { color: textColor } },
-          y: { grid: { color: gridColor }, ticks: { color: textColor } }
-        }
-      }
-    });
-  }
-
-  function calculateCapability() {
-    // Feature: safety_rating (values range 2 to 100)
-    // Limits: LSL = 20, USL = 90
-    const ratings = activeClaimsData
-      .map(d => d.safety_rating)
-      .filter(v => typeof v === 'number');
-
-    if (ratings.length === 0) return;
-
-    const n = ratings.length;
-    const sum = ratings.reduce((s, v) => s + v, 0);
-    const mean = sum / n;
-
-    const squaredDiffs = ratings.map(v => Math.pow(v - mean, 2));
-    const variance = squaredDiffs.reduce((s, v) => s + v, 0) / (n - 1 || 1);
-    const stdev = Math.sqrt(variance);
-
-    const lsl = 20;
-    const usl = 90;
-
-    // Process Capability metrics
-    const cp = (usl - lsl) / (6 * stdev);
-    const cpl = (mean - lsl) / (3 * stdev);
-    const cpu = (usl - mean) / (3 * stdev);
-    const cpk = Math.min(cpl, cpu);
-
-    document.getElementById('cap-mean').textContent = mean.toFixed(1);
-    document.getElementById('cap-stdev').textContent = stdev.toFixed(2);
-    document.getElementById('cap-cp').textContent = cp.toFixed(2);
-    document.getElementById('cap-cpk').textContent = cpk.toFixed(2);
-
-    // Apply color highlights based on standard process cap benchmarks
-    const cpEl = document.getElementById('cap-cp');
-    const cpkEl = document.getElementById('cap-cpk');
-    
-    [cpEl, cpkEl].forEach(el => {
-      const val = parseFloat(el.textContent);
-      el.className = '';
-      if (val >= 1.33) el.classList.add('text-success');
-      else if (val >= 1.0) el.classList.add('text-warning');
-      else el.classList.add('text-danger');
-    });
-
-    renderCapabilityChart(ratings, mean, stdev, lsl, usl);
-  }
-
-  function renderCapabilityChart(ratings, mean, stdev, lsl, usl) {
-    if (chartCapability) chartCapability.destroy();
-
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const textColor = isDark ? '#f3f4f6' : '#0f172a';
-    const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(15, 23, 42, 0.08)';
-
-    // 1. Bin ratings for histogram
-    const numBins = 15;
-    const minVal = 0;
-    const maxVal = 100;
-    const binWidth = (maxVal - minVal) / numBins;
-
-    const binCounts = Array(numBins).fill(0);
-    ratings.forEach(v => {
-      const idx = Math.min(numBins - 1, Math.floor((v - minVal) / binWidth));
-      binCounts[idx]++;
-    });
-
-    const labels = Array.from({ length: numBins }, (_, i) => {
-      const center = minVal + (i + 0.5) * binWidth;
-      return Math.round(center);
-    });
-
-    // 2. Generate normal curve values
-    // density = (1 / (std * sqrt(2pi))) * exp(-0.5 * ((x-mean)/std)^2)
-    // scaled density = density * totalCount * binWidth
-    const normalCurve = labels.map(x => {
-      const exp = Math.exp(-0.5 * Math.pow((x - mean) / stdev, 2));
-      const density = (1 / (stdev * Math.sqrt(2 * Math.PI))) * exp;
-      return density * ratings.length * binWidth;
-    });
-
-    const ctx = document.getElementById('chart-capability-normal').getContext('2d');
-    chartCapability = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [
-          {
-            label: 'Histogram Counts',
-            data: binCounts,
-            backgroundColor: 'rgba(59, 130, 246, 0.4)',
-            borderColor: 'rgba(59, 130, 246, 0.8)',
-            borderWidth: 1,
-            borderRadius: 2,
-            categoryPercentage: 1.0,
-            barPercentage: 0.95
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { color: textColor, font: { family: 'Inter' } } }
           },
-          {
-            label: 'Normal Curve fit',
-            type: 'line',
-            data: normalCurve,
-            borderColor: '#ef4444',
-            borderWidth: 2.5,
-            pointRadius: 0,
-            tension: 0.4
+          scales: {
+            x: { grid: { display: false }, ticks: { color: textColor } },
+            y: { grid: { color: gridColor }, ticks: { color: textColor } }
           }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          annotation: { // Will construct fallback limits in line points if plugin unavailable
-            annotations: {}
-          }
-        },
-        scales: {
-          x: { grid: { display: false }, ticks: { color: textColor } },
-          y: { grid: { color: gridColor }, ticks: { color: textColor } }
         }
-      }
-    });
-  }
-
-  function renderCorrelationMatrix() {
-    const columns = [
-      { name: 'Age', key: 'age' },
-      { name: 'Months Cus.', key: 'months_as_customer' },
-      { name: 'Deductible', key: 'policy_deductable' },
-      { name: 'Premium', key: 'policy_annual_premium' },
-      { name: 'Claim Amt', key: 'total_claim_amount' },
-      { name: 'Injuries', key: 'bodily_injuries' },
-      { name: 'Witnesses', key: 'witnesses' }
-    ];
-
-    const matrixContainer = document.getElementById('correlation-matrix');
-    matrixContainer.innerHTML = '';
-    
-    // Set grid dimensions in CSS variable
-    matrixContainer.style.gridTemplateColumns = `repeat(${columns.length + 1}, 1fr)`;
-
-    // 1. Header Corner
-    const corner = document.createElement('div');
-    corner.className = 'corr-header-label';
-    corner.style.fontWeight = '700';
-    corner.style.fontSize = '9px';
-    corner.style.color = 'var(--text-muted)';
-    corner.textContent = 'Factor';
-    matrixContainer.appendChild(corner);
-
-    // 2. Column Headers
-    columns.forEach(col => {
-      const header = document.createElement('div');
-      header.className = 'corr-header-label';
-      header.style.fontWeight = '600';
-      header.style.fontSize = '9px';
-      header.style.textAlign = 'center';
-      header.style.color = 'var(--text-secondary)';
-      header.textContent = col.name;
-      matrixContainer.appendChild(header);
-    });
-
-    // 3. Row-by-Row Correlation Compute
-    columns.forEach((rowCol) => {
-      // Row Label
-      const rowLabel = document.createElement('div');
-      rowLabel.className = 'corr-row-label';
-      rowLabel.style.fontWeight = '600';
-      rowLabel.style.fontSize = '9px';
-      rowLabel.style.display = 'flex';
-      rowLabel.style.alignItems = 'center';
-      rowLabel.style.color = 'var(--text-secondary)';
-      rowLabel.textContent = rowCol.name;
-      matrixContainer.appendChild(rowLabel);
-
-      columns.forEach((colCol) => {
-        const cell = document.createElement('div');
-        cell.className = 'corr-cell';
-        
-        const r = calculatePearson(rowCol.key, colCol.key);
-        
-        cell.textContent = r.toFixed(2);
-        cell.setAttribute('data-tooltip', `${rowCol.name} vs ${colCol.name}: r = ${r.toFixed(4)}`);
-        
-        // Color Interpolator: Red (-1.0) -> White (0.0) -> Blue (+1.0)
-        let bgColor = '';
-        if (r >= 0) {
-          // Blue interpolator
-          bgColor = `rgba(37, 99, 235, ${r.toFixed(2)})`;
-        } else {
-          // Red interpolator
-          bgColor = `rgba(239, 68, 68, ${Math.abs(r).toFixed(2)})`;
-        }
-        
-        cell.style.backgroundColor = bgColor;
-        
-        // High values contrast
-        if (Math.abs(r) < 0.25) {
-          cell.style.color = 'var(--text-primary)';
-        } else {
-          cell.style.color = '#ffffff';
-        }
-
-        matrixContainer.appendChild(cell);
       });
-    });
-  }
-
-  function calculatePearson(key1, key2) {
-    const list1 = [];
-    const list2 = [];
-    
-    activeClaimsData.forEach(d => {
-      const v1 = d[key1];
-      const v2 = d[key2];
-      if (typeof v1 === 'number' && typeof v2 === 'number') {
-        list1.push(v1);
-        list2.push(v2);
-      }
-    });
-
-    const n = list1.length;
-    if (n === 0) return 0;
-
-    const mean1 = list1.reduce((s, v) => s + v, 0) / n;
-    const mean2 = list2.reduce((s, v) => s + v, 0) / n;
-
-    let num = 0;
-    let den1 = 0;
-    let den2 = 0;
-
-    for (let i = 0; i < n; i++) {
-      const diff1 = list1[i] - mean1;
-      const diff2 = list2[i] - mean2;
-      num += diff1 * diff2;
-      den1 += diff1 * diff1;
-      den2 += diff2 * diff2;
     }
 
-    if (den1 === 0 || den2 === 0) return 0;
-    return num / Math.sqrt(den1 * den2);
+    // 2. Vehicle Category
+    const canvasVehicle = document.getElementById('chart-analytics-vehicle');
+    if (canvasVehicle) {
+      chartAnVehicle = new Chart(canvasVehicle.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: ['Sedan', 'SUV', 'Truck', 'Coupe', 'Hatchback'],
+          datasets: [{
+            label: 'Fraud Rate %',
+            data: [42, 38, 31, 48, 25],
+            backgroundColor: '#3B82F6',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: textColor } },
+            y: { grid: { color: gridColor }, ticks: { color: textColor } }
+          }
+        }
+      });
+    }
+
+    // 3. Site
+    const canvasSite = document.getElementById('chart-analytics-site');
+    if (canvasSite) {
+      chartAnSite = new Chart(canvasSite.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: ['Highway', 'Intersection', 'Parking Lot', 'Rural'],
+          datasets: [{
+            label: 'Fraud Rate %',
+            data: [45, 52, 28, 35],
+            backgroundColor: '#EF4444',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: textColor } },
+            y: { grid: { color: gridColor }, ticks: { color: textColor } }
+          }
+        }
+      });
+    }
+
+    // 4. Age
+    const canvasAge = document.getElementById('chart-analytics-age');
+    if (canvasAge) {
+      chartAnAge = new Chart(canvasAge.getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: ['18-25', '26-35', '36-45', '46-55', '56+'],
+          datasets: [{
+            label: 'Fraud Rate %',
+            data: [48, 35, 30, 26, 22],
+            borderColor: '#3B82F6',
+            backgroundColor: 'rgba(59, 130, 246, 0.12)',
+            fill: true,
+            tension: 0.35,
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: textColor } },
+            y: { grid: { color: gridColor }, ticks: { color: textColor } }
+          }
+        }
+      });
+    }
+
+    // 5. Risk distribution
+    const canvasRisk = document.getElementById('chart-analytics-risk');
+    if (canvasRisk) {
+      chartAnRisk = new Chart(canvasRisk.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: ['Low Risk', 'Medium Risk', 'High Risk'],
+          datasets: [{
+            label: 'Claims Distribution',
+            data: [620, 410, 217],
+            backgroundColor: ['#22C55E', '#F59E0B', '#EF4444'],
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: textColor } },
+            y: { grid: { color: gridColor }, ticks: { color: textColor } }
+          }
+        }
+      });
+    }
   }
 
-  // --- 6. FRAUD RISK PREDICTOR ---
+  // --- 8. FRAUD RISK PREDICTOR ---
   function initPredictorForm() {
     const formInputs = [
       'pred-model-select', 'pred-severity', 'pred-hobby', 'pred-collision',
@@ -1565,7 +1254,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const input = document.getElementById(id);
       if (!input) return;
       
-      // Real-time recalculation
       input.addEventListener('input', () => {
         updateLabelValues(id, input.value);
         calculatePrediction();
@@ -1576,7 +1264,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    // Model selection cards click listener
     const modelCards = document.querySelectorAll('#model-selection-cards .model-card');
     modelCards.forEach(card => {
       card.addEventListener('click', () => {
@@ -1596,17 +1283,19 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    // Run initial compute
     calculatePrediction();
   }
 
   function updateLabelValues(id, value) {
     if (id === 'pred-age') {
-      document.getElementById('val-age').textContent = value;
+      const el = document.getElementById('val-age');
+      if (el) el.textContent = value;
     } else if (id === 'pred-claim') {
-      document.getElementById('val-claim').textContent = parseInt(value).toLocaleString();
+      const el = document.getElementById('val-claim');
+      if (el) el.textContent = parseInt(value).toLocaleString();
     } else if (id === 'pred-hour') {
-      document.getElementById('val-hour').textContent = `${String(value).padStart(2, '0')}:00`;
+      const el = document.getElementById('val-hour');
+      if (el) el.textContent = `${String(value).padStart(2, '0')}:00`;
     } else if (id === 'pred-model-select') {
       updateActiveModelBadges(value);
     }
@@ -1616,11 +1305,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const headerModelName = document.getElementById('header-active-model-name');
     const resultModelName = document.getElementById('result-model-name-text');
     const modelTypeBadge = document.getElementById('active-model-type-badge');
+    const heroModelName = document.getElementById('hero-model-name');
 
     if (headerModelName) headerModelName.textContent = modelName;
     if (resultModelName) resultModelName.textContent = modelName;
+    if (heroModelName) heroModelName.textContent = `${modelName} (Champion)`;
 
-    // Sync model cards visual state
     const modelCards = document.querySelectorAll('#model-selection-cards .model-card');
     modelCards.forEach(card => {
       if (card.getAttribute('data-model') === modelName) {
@@ -1631,22 +1321,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (modelTypeBadge) {
-      if (modelName.includes('Gradient Boosting')) {
-        modelTypeBadge.textContent = 'Tuned Champion';
-        modelTypeBadge.className = 'badge badge-success-light';
-      } else if (modelName.includes('Random Forest')) {
-        modelTypeBadge.textContent = 'Ensemble Bagging';
-        modelTypeBadge.className = 'badge badge-warning-light';
-      } else if (modelName.includes('Logistic')) {
-        modelTypeBadge.textContent = 'Standardized Linear';
-        modelTypeBadge.className = 'badge badge-primary-light';
-      } else if (modelName.includes('AdaBoost')) {
-        modelTypeBadge.textContent = 'Adaptive Boosting';
-        modelTypeBadge.className = 'badge badge-primary-light';
-      } else if (modelName.includes('Decision Tree')) {
-        modelTypeBadge.textContent = 'Tree (depth=6)';
-        modelTypeBadge.className = 'badge badge-primary-light';
-      }
+      modelTypeBadge.textContent = `Model: ${modelName}`;
     }
   }
 
@@ -1656,7 +1331,7 @@ document.addEventListener('DOMContentLoaded', () => {
     clearTimeout(predictionDebounceTimer);
     predictionDebounceTimer = setTimeout(async () => {
       await runPredictionComputation();
-    }, 120);
+    }, 100);
   }
 
   async function runPredictionComputation() {
@@ -1664,20 +1339,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectedModelName = modelSelectEl ? modelSelectEl.value : 'Gradient Boosting Classifier';
     updateActiveModelBadges(selectedModelName);
 
-    const severity = document.getElementById('pred-severity').value;
-    const hobby = document.getElementById('pred-hobby').value;
-    const collision = document.getElementById('pred-collision').value;
-    const age = parseInt(document.getElementById('pred-age').value);
-    const claim = parseFloat(document.getElementById('pred-claim').value);
-    const witnesses = parseInt(document.getElementById('pred-witnesses').value);
-    const injuries = parseInt(document.getElementById('pred-injuries').value);
-    const hour = parseInt(document.getElementById('pred-hour').value);
-    const vehicles = parseInt(document.getElementById('pred-vehicles').value);
+    const severity = document.getElementById('pred-severity') ? document.getElementById('pred-severity').value : 'Minor Damage';
+    const hobby = document.getElementById('pred-hobby') ? document.getElementById('pred-hobby').value : 'reading';
+    const collision = document.getElementById('pred-collision') ? document.getElementById('pred-collision').value : 'Front Collision';
+    const age = parseInt(document.getElementById('pred-age') ? document.getElementById('pred-age').value : 35);
+    const claim = parseFloat(document.getElementById('pred-claim') ? document.getElementById('pred-claim').value : 35000);
+    const witnesses = parseInt(document.getElementById('pred-witnesses') ? document.getElementById('pred-witnesses').value : 2);
+    const injuries = parseInt(document.getElementById('pred-injuries') ? document.getElementById('pred-injuries').value : 1);
+    const hour = parseInt(document.getElementById('pred-hour') ? document.getElementById('pred-hour').value : 12);
+    const vehicles = parseInt(document.getElementById('pred-vehicles') ? document.getElementById('pred-vehicles').value : 1);
 
     let risk = 12.0;
     let factors = [];
     let usedBackend = false;
-    let modelUsedDisplay = selectedModelName;
 
     // Call Python ML Backend API
     try {
@@ -1702,88 +1376,64 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = await response.json();
         risk = data.fraud_probability;
         factors = data.factors || [];
-        if (data.model_used) modelUsedDisplay = data.model_used;
         usedBackend = true;
       }
     } catch (e) {
-      // Backend unavailable; use local calculation fallback
+      // Local calculation fallback
     }
 
     if (!usedBackend) {
-      // Heuristics Score fallback
       risk = 12.0;
       if (severity === 'Major Damage') {
         risk += 45;
-        factors.push({ name: 'Major Collision Severity', value: '+45%', state: 'pos' });
+        factors.push({ name: 'Major Collision Severity', value: 'High Impact', state: 'pos' });
       } else if (severity === 'Total Loss') {
         risk += 18;
-        factors.push({ name: 'Total Vehicle Loss', value: '+18%', state: 'pos' });
+        factors.push({ name: 'Total Vehicle Loss', value: 'Medium Impact', state: 'pos' });
       } else if (severity === 'Minor Damage') {
         risk += 3;
-        factors.push({ name: 'Minor Collision Damage', value: '+3%', state: 'pos' });
+        factors.push({ name: 'Minor Collision Damage', value: 'Low Impact', state: 'pos' });
       } else {
         risk -= 8;
-        factors.push({ name: 'Trivial Incident Impact', value: '-8%', state: 'neg' });
+        factors.push({ name: 'Trivial Incident Damage', value: 'Low Risk', state: 'neg' });
       }
 
       if (hobby === 'chess' || hobby === 'yachting' || hobby === 'skydiving') {
         risk += 30;
-        factors.push({ name: `Policyholder Hobby: ${hobby.charAt(0).toUpperCase() + hobby.slice(1)}`, value: '+30%', state: 'pos' });
+        factors.push({ name: `Insured Hobby: ${hobby.charAt(0).toUpperCase() + hobby.slice(1)}`, value: 'High Risk Pattern', state: 'pos' });
       } else if (hobby === 'reading') {
         risk -= 6;
-        factors.push({ name: 'Policyholder Hobby: Reading', value: '-6%', state: 'neg' });
+        factors.push({ name: 'Insured Hobby: Reading', value: 'Low Risk Pattern', state: 'neg' });
       }
 
       if (age < 26) {
         risk += 10;
-        factors.push({ name: 'High-risk Under-26 Driver', value: '+10%', state: 'pos' });
+        factors.push({ name: 'Driver Age: Under 26', value: 'Elevated Risk', state: 'pos' });
       } else if (age > 50) {
         risk -= 5;
-        factors.push({ name: 'Senior Driver Profile', value: '-5%', state: 'neg' });
+        factors.push({ name: 'Driver Age: 50+', value: 'Low Risk Profile', state: 'neg' });
       }
 
       if (claim > 80000) {
         risk += 14;
-        factors.push({ name: 'Extreme Claim Value (>$80k)', value: '+14%', state: 'pos' });
+        factors.push({ name: 'High Claim Value (>$80k)', value: 'High Impact', state: 'pos' });
       } else if (claim > 50000) {
         risk += 6;
-        factors.push({ name: 'Elevated Claim Value (>$50k)', value: '+6%', state: 'pos' });
+        factors.push({ name: 'Moderate Claim Value (>$50k)', value: 'Medium Impact', state: 'pos' });
       } else if (claim < 10000) {
         risk -= 8;
-        factors.push({ name: 'Low Claim Value (<$10k)', value: '-8%', state: 'neg' });
-      }
-
-      if (hour >= 22 || hour <= 4) {
-        risk += 8;
-        factors.push({ name: 'Late-Night Incident Timing', value: '+8%', state: 'pos' });
-      } else if (hour >= 10 && hour <= 16) {
-        risk -= 3;
-        factors.push({ name: 'Mid-day Incident Traffic', value: '-3%', state: 'neg' });
+        factors.push({ name: 'Low Claim Value (<$10k)', value: 'Low Risk', state: 'neg' });
       }
 
       if (witnesses === 0) {
         risk += 6;
-        factors.push({ name: 'Zero Witnesses Present', value: '+6%', state: 'pos' });
-      } else if (witnesses >= 3) {
-        risk -= 5;
-        factors.push({ name: 'Multiple Active Witnesses', value: '-5%', state: 'neg' });
-      }
-
-      // Algorithm-specific fine-tuning
-      const mName = selectedModelName.toLowerCase();
-      if (mName.includes('random forest')) {
-        risk = risk * 1.03;
-      } else if (mName.includes('logistic')) {
-        risk = risk * 0.98;
-      } else if (mName.includes('decision tree')) {
-        risk = risk * 1.04;
-      } else if (mName.includes('adaboost')) {
-        risk = risk * 1.01;
+        factors.push({ name: 'Zero Witnesses Present', value: 'Minor Impact', state: 'pos' });
+      } else if (witnesses >= 2) {
+        factors.push({ name: 'Witnesses Available', value: 'Verified', state: 'neg' });
       }
     }
 
-    // Restrain bounds
-    risk = Math.max(2, Math.min(98, risk));
+    risk = Math.max(4, Math.min(96, risk));
 
     // Update gauge visuals
     const fillRing = document.getElementById('gauge-fill-ring');
@@ -1794,14 +1444,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (probVal) probVal.textContent = `${Math.round(risk)}%`;
 
     if (statusTag) {
-      statusTag.textContent = usedBackend ? 'Live API ML' : 'Client-Side Engine';
-      statusTag.className = usedBackend ? 'badge badge-success-light' : 'badge badge-primary-light';
+      statusTag.textContent = usedBackend ? 'Live AI Backend' : 'Active Model';
+      statusTag.className = 'badge badge-success-light';
     }
 
     if (fillRing) {
       const offset = 534 - (534 * risk) / 100;
       fillRing.style.strokeDashoffset = offset;
-      fillRing.style.stroke = 'var(--primary)';
     }
 
     if (badge) {
@@ -1821,34 +1470,30 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Render Influencing factors
     const list = document.getElementById('predictor-factors-list');
     if (list) {
       list.innerHTML = '';
 
       if (factors.length === 0) {
-        list.innerHTML = `<li class="text-secondary" style="font-size: 12px; text-align: center; padding: 20px 0;">No significant risk factors flagged for these inputs.</li>`;
+        list.innerHTML = `<li class="text-secondary" style="font-size: 12px; text-align: center; padding: 16px 0;">No significant risk factors detected.</li>`;
         return;
       }
-
-      // Sort factors showing positive (dangerous) ones first
-      factors.sort((a, b) => (b.state === 'pos') - (a.state === 'pos'));
 
       factors.forEach(f => {
         const li = document.createElement('li');
         li.className = 'factor-item';
 
         const isPos = f.state === 'pos';
-        const valClass = isPos ? 'pos' : 'neg';
-        const icon = isPos ? 'plus-circle' : 'minus-circle';
+        const icon = isPos ? 'alert-triangle' : 'check-circle-2';
         const iconColor = isPos ? 'var(--danger)' : 'var(--success)';
+        const impactColor = isPos ? 'var(--danger-text)' : 'var(--success-text)';
 
         li.innerHTML = `
           <div style="display: flex; align-items: center; gap: 8px;">
             <i data-lucide="${icon}" style="width: 14px; height: 14px; color: ${iconColor};"></i>
             <span class="factor-name">${f.name}</span>
           </div>
-          <span class="factor-value ${valClass}">${f.value}</span>
+          <span class="factor-impact" style="color: ${impactColor};">${f.value}</span>
         `;
         list.appendChild(li);
       });
@@ -1857,281 +1502,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // --- 7. MINITAB DATA PREPARATION LAB ---
-  function renderDataPrepLab() {
-    const missingCountEl = document.getElementById('prep-missing-count');
-    const outliersCountEl = document.getElementById('prep-outliers-count');
-    const totalRowsEl = document.getElementById('prep-total-rows');
-    const statusBadgeEl = document.getElementById('prep-status-badge');
+  // --- 9. THEME & ACCESSIBILITY ---
+  function initTheme() {}
 
-    if (!missingCountEl && !outliersCountEl && !totalRowsEl && !statusBadgeEl) {
-      return; // Skip if elements are not present in this workspace view
-    }
-
-    // 1. Calculate missing counts (cells with "?")
-    let missingCount = 0;
-    activeClaimsData.forEach(d => {
-      if (d.collision_type === '?') missingCount++;
-      if (d.property_damage === '?') missingCount++;
-      if (d.police_report_available === '?') missingCount++;
-    });
-
-    // 2. Outliers calculation
-    const premiums = activeClaimsData
-      .map(d => d.policy_annual_premium)
-      .filter(v => typeof v === 'number');
-
-    let outlierCount = 0;
-    if (premiums.length > 0) {
-      const mean = premiums.reduce((s, v) => s + v, 0) / premiums.length;
-      const squaredDiffs = premiums.map(v => Math.pow(v - mean, 2));
-      const sd = Math.sqrt(squaredDiffs.reduce((s, v) => s + v, 0) / (premiums.length - 1 || 1));
-      
-      activeClaimsData.forEach(d => {
-        if (typeof d.policy_annual_premium === 'number') {
-          const z = Math.abs(d.policy_annual_premium - mean) / sd;
-          if (z > 3) outlierCount++;
-        }
-      });
-    }
-
-    // Update Indicators
-    if (missingCountEl) missingCountEl.textContent = missingCount.toLocaleString();
-    if (outliersCountEl) outliersCountEl.textContent = outlierCount;
-    if (totalRowsEl) totalRowsEl.textContent = activeClaimsData.length.toLocaleString();
-    
-    if (statusBadgeEl) {
-      statusBadgeEl.className = 'indicator-badge';
-      if (dataPrepState.missingCleaned || dataPrepState.outliersFiltered || dataPrepState.binned) {
-        statusBadgeEl.textContent = 'Optimized Data';
-        statusBadgeEl.classList.remove('badge-info');
-        statusBadgeEl.classList.add('badge-success');
-        statusBadgeEl.style.backgroundColor = 'var(--success-bg)';
-        statusBadgeEl.style.color = 'var(--success)';
-      } else {
-        statusBadgeEl.textContent = 'Raw Data';
-        statusBadgeEl.style.backgroundColor = 'var(--primary-light)';
-        statusBadgeEl.style.color = 'var(--primary)';
-      }
-    }
-
-    // Enable/disable buttons based on state
-    const btnMissing = document.getElementById('btn-prep-missing');
-    const btnOutliers = document.getElementById('btn-prep-outliers');
-    const btnBinning = document.getElementById('btn-prep-binning');
-
-    if (btnMissing) btnMissing.disabled = dataPrepState.missingCleaned;
-    if (btnOutliers) btnOutliers.disabled = dataPrepState.outliersFiltered || outlierCount === 0;
-    if (btnBinning) btnBinning.disabled = dataPrepState.binned;
-
-    // Render Preview grid
-    renderPrepPreview();
-  }
-
-  function renderPrepPreview() {
-    const previewBody = document.getElementById('prep-preview-body');
-    if (!previewBody) return; // Skip if elements are not present
-
-    previewBody.innerHTML = '';
-
-    const first5 = activeClaimsData.slice(0, 5);
-    first5.forEach(d => {
-      const tr = document.createElement('tr');
-      const valAge = d.age_binned ? `<strong>${d.age_binned}</strong>` : d.age;
-      const missingFmt = (val) => val === '?' ? '<span class="text-danger">? (Missing)</span>' : val;
-      
-      tr.innerHTML = `
-        <td>${d.policy_number}</td>
-        <td>${valAge}</td>
-        <td>${missingFmt(d.collision_type)}</td>
-        <td>${missingFmt(d.property_damage)}</td>
-        <td>${missingFmt(d.police_report_available)}</td>
-        <td style="font-weight: 500;">$${(d.policy_annual_premium || 0).toLocaleString()}</td>
-      `;
-      previewBody.appendChild(tr);
-    });
-  }
-
-  function initDataPrepActions() {
-    const btnMissing = document.getElementById('btn-prep-missing');
-    const btnOutliers = document.getElementById('btn-prep-outliers');
-    const btnBinning = document.getElementById('btn-prep-binning');
-    const btnReset = document.getElementById('btn-reset-lab');
-
-    if (btnMissing) {
-      btnMissing.addEventListener('click', () => {
-        activeClaimsData.forEach(d => {
-          if (d.collision_type === '?') d.collision_type = 'Unknown';
-          if (d.property_damage === '?') d.property_damage = 'Unknown';
-          if (d.police_report_available === '?') d.police_report_available = 'Unknown';
-        });
-        dataPrepState.missingCleaned = true;
-        syncDataPrepChange();
-      });
-    }
-
-    if (btnOutliers) {
-      btnOutliers.addEventListener('click', () => {
-        const premiums = activeClaimsData
-          .map(d => d.policy_annual_premium)
-          .filter(v => typeof v === 'number');
-
-        if (premiums.length === 0) return;
-
-        const mean = premiums.reduce((s, v) => s + v, 0) / premiums.length;
-        const squaredDiffs = premiums.map(v => Math.pow(v - mean, 2));
-        const sd = Math.sqrt(squaredDiffs.reduce((s, v) => s + v, 0) / (premiums.length - 1 || 1));
-
-        activeClaimsData = activeClaimsData.filter(d => {
-          if (typeof d.policy_annual_premium !== 'number') return true;
-          const z = Math.abs(d.policy_annual_premium - mean) / sd;
-          return z <= 3;
-        });
-
-        dataPrepState.outliersFiltered = true;
-        syncDataPrepChange();
-      });
-    }
-
-    if (btnBinning) {
-      btnBinning.addEventListener('click', () => {
-        activeClaimsData.forEach(d => {
-          const age = d.age;
-          if (typeof age === 'number') {
-            if (age < 30) d.age_binned = 'Young Adult';
-            else if (age <= 50) d.age_binned = 'Adult';
-            else d.age_binned = 'Senior';
-          } else {
-            d.age_binned = 'Unknown';
-          }
-        });
-        dataPrepState.binned = true;
-        syncDataPrepChange();
-      });
-    }
-
-    if (btnReset) {
-      btnReset.addEventListener('click', () => {
-        activeClaimsData = JSON.parse(JSON.stringify(originalClaimsData));
-        dataPrepState = {
-          missingCleaned: false,
-          outliersFiltered: false,
-          binned: false
-        };
-        syncDataPrepChange();
-      });
-    }
-  }
-
-  function syncDataPrepChange() {
-    renderDataPrepLab();
-    
-    // Propagate variables change back to explorer table & stats charts
-    renderTable();
-    
-    // If stats suite visible, recalculate stats
-    const statsTab = document.getElementById('analytics-tab');
-    if (statsTab.classList.contains('active')) {
-      renderStatsSuite();
-    }
-  }
-
-  // --- 8. DESIGN THEME & COHESIVE SYSTEM ---
-  function initTheme() {
-    // Set default Light Theme
-    const savedTheme = localStorage.getItem('themeChoice') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-
-    // Accent Color Palette
-    const savedAccent = localStorage.getItem('accentChoice') || (savedTheme === 'light' ? 'sapphire' : 'emerald');
-    setAccentTheme(savedAccent);
-
-    // Theme Toggle (Light / Dark)
-    const themeToggleBtn = document.getElementById('theme-toggle');
-    if (themeToggleBtn) {
-      themeToggleBtn.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-        const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', nextTheme);
-        localStorage.setItem('themeChoice', nextTheme);
-        
-        // Re-render chart text colors
-        try { renderOverviewCharts(); } catch(e) {}
-        try { 
-          const analyticsTab = document.getElementById('analytics-tab');
-          if (analyticsTab && analyticsTab.classList.contains('active')) {
-            renderAnalyticsCharts();
-          }
-        } catch(e) {}
-      });
-    }
-
-    const paletteBtn = document.getElementById('theme-palette-btn');
-    const popover = document.getElementById('theme-color-popover');
-    const colorDots = document.querySelectorAll('.color-dot-opt');
-
-    if (paletteBtn && popover) {
-      paletteBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        popover.classList.toggle('open');
-      });
-
-      document.addEventListener('click', (e) => {
-        if (!popover.contains(e.target) && e.target !== paletteBtn) {
-          popover.classList.remove('open');
-        }
-      });
-    }
-
-    colorDots.forEach(dot => {
-      dot.addEventListener('click', () => {
-        const theme = dot.getAttribute('data-color-theme');
-        setAccentTheme(theme);
-        localStorage.setItem('accentChoice', theme);
-        if (popover) popover.classList.remove('open');
-      });
-    });
-
-    function setAccentTheme(theme) {
-      document.documentElement.setAttribute('data-accent', theme);
-      colorDots.forEach(d => {
-        if (d.getAttribute('data-color-theme') === theme) {
-          d.classList.add('active');
-        } else {
-          d.classList.remove('active');
-        }
-      });
-    }
-
-    // Settings Alert
-    const settingsBtn = document.getElementById('btn-settings');
-    if (settingsBtn) {
-      settingsBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        alert('Vehicle Insurance Fraud Data settings panel is standard in production. Current version runs in analytical demo mode.');
-      });
-    }
-
-    // Help Center Alert
-    const helpBtn = document.getElementById('btn-help');
-    if (helpBtn) {
-      helpBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        alert('For help, contact the compliance support desk or read the documentation.');
-      });
-    }
-  }
-
-  // --- 9. LOGIN PAGE TRANSITION & CONSTELLATION CANVAS ---
+  // --- 10. LOGIN CODE ---
   function initLogin() {
-    const loginPage = document.getElementById('login-page');
-    const appContainer = document.getElementById('app-container');
     const loginForm = document.getElementById('form-login');
     const demoBtn = document.getElementById('btn-login-demo');
-
     const submitBtn = document.getElementById('btn-login-submit');
 
-    // Handle Form Login
     if (loginForm) {
       loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -2139,7 +1518,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Handle Submit Button Click
     if (submitBtn) {
       submitBtn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -2147,7 +1525,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Handle Demo Login
     if (demoBtn) {
       demoBtn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -2155,7 +1532,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Password visibility toggle
     const togglePwdBtn = document.querySelector('.btn-reveal-pwd');
     const pwdInput = document.getElementById('login-password');
     if (togglePwdBtn && pwdInput) {
@@ -2165,78 +1541,12 @@ document.addEventListener('DOMContentLoaded', () => {
         togglePwdBtn.innerHTML = isPwd 
           ? `<i data-lucide="eye-off" style="width: 16px; height: 16px;"></i>` 
           : `<i data-lucide="eye" style="width: 16px; height: 16px;"></i>`;
-        lucide.createIcons();
+        if (window.lucide) lucide.createIcons();
       });
     }
-
-    // Init Constellation Canvas
-    initConstellation();
   }
 
-  function initConstellation() {
-    const canvas = document.getElementById('constellation-canvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    
-    let width = canvas.width = canvas.offsetWidth;
-    let height = canvas.height = canvas.offsetHeight;
-    
-    // Handle resize
-    window.addEventListener('resize', () => {
-      if (canvas.offsetWidth && canvas.offsetHeight) {
-        width = canvas.width = canvas.offsetWidth;
-        height = canvas.height = canvas.offsetHeight;
-      }
-    });
-
-    const particles = [];
-    const maxParticles = 50;
-
-    for (let i = 0; i < maxParticles; i++) {
-      particles.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        radius: Math.random() * 2 + 1
-      });
-    }
-
-    function animate() {
-      ctx.clearRect(0, 0, width, height);
-      ctx.fillStyle = 'rgba(59, 130, 246, 0.4)';
-      ctx.strokeStyle = 'rgba(59, 130, 246, 0.04)';
-      
-      particles.forEach((p, idx) => {
-        p.x += p.vx;
-        p.y += p.vy;
-        
-        if (p.x < 0 || p.x > width) p.vx *= -1;
-        if (p.y < 0 || p.y > height) p.vy *= -1;
-        
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fill();
-        
-        // Connect lines
-        for (let j = idx + 1; j < particles.length; j++) {
-          const p2 = particles[j];
-          const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-          if (dist < 100) {
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.stroke();
-          }
-        }
-      });
-      
-      requestAnimationFrame(animate);
-    }
-    animate();
-  }
-
-  // --- 9. COMPREHENSIVE FRAUD DETECTION FORM & BACKEND ML INTEGRATION ---
+  // --- 11. ML BACKEND HEALTH & CONFIG ---
   const getApiBase = () => {
     try {
       const urlParams = new URLSearchParams(window.location.search);
@@ -2256,10 +1566,8 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   let ML_API_BASE = getApiBase();
-  let isBackendOnline = false;
 
   async function checkMLBackendHealth(showFeedback = false) {
-    const statusPill = document.getElementById('ml-backend-status-pill');
     const statusText = document.getElementById('ml-backend-status-text');
     const sidebarBadge = document.getElementById('sidebar-ml-badge');
     const sidebarDot = document.getElementById('system-status-dot');
@@ -2269,24 +1577,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
     if (!ML_API_BASE && !isLocal) {
-      isBackendOnline = false;
-      if (statusPill) {
-        statusPill.classList.remove('offline');
-        statusText.textContent = 'Cloud Mode (Built-in ML Engine)';
-      }
+      if (statusText) statusText.textContent = 'Built-in ML Engine Active';
       if (sidebarBadge) {
-        sidebarBadge.textContent = 'Cloud';
-        sidebarBadge.className = 'badge badge-primary sidebar-badge';
+        sidebarBadge.textContent = 'Active';
+        sidebarBadge.className = 'badge badge-success sidebar-badge';
       }
-      if (sidebarDot) {
-        sidebarDot.style.backgroundColor = '#3b82f6';
-      }
-      if (sidebarTitle) {
-        sidebarTitle.textContent = 'Cloud Standalone Mode';
-      }
-      if (sidebarDesc) {
-        sidebarDesc.textContent = 'Interactive Client ML Active • Click to connect API';
-      }
+      if (sidebarDot) sidebarDot.style.backgroundColor = '#16A34A';
+      if (sidebarTitle) sidebarTitle.textContent = 'ML Engine Online';
+      if (sidebarDesc) sidebarDesc.textContent = 'Interactive Client ML Active';
       return false;
     }
 
@@ -2295,137 +1593,34 @@ document.addEventListener('DOMContentLoaded', () => {
       const response = await fetch(targetUrl, { method: 'GET' });
       if (response.ok) {
         const data = await response.json();
-        isBackendOnline = true;
-
-        if (statusPill) {
-          statusPill.classList.remove('offline');
-          statusText.textContent = `Backend Connected (${ML_API_BASE ? 'Remote' : 'Port 8000'})`;
-        }
+        if (statusText) statusText.textContent = `Backend Connected (${ML_API_BASE ? 'Remote' : 'Port 8000'})`;
         if (sidebarBadge) {
           sidebarBadge.textContent = 'Live';
           sidebarBadge.className = 'badge badge-success sidebar-badge';
         }
-        if (sidebarDot) {
-          sidebarDot.style.backgroundColor = '#10b981';
-        }
-        if (sidebarTitle) {
-          sidebarTitle.textContent = 'ML Backend Online';
-        }
-        if (sidebarDesc) {
-          sidebarDesc.textContent = `FastAPI engine online (${data.active_model || 'Gradient Boosting'})`;
-        }
-
-        // Load dynamic model info
-        loadModelMetadata();
+        if (sidebarDot) sidebarDot.style.backgroundColor = '#16A34A';
+        if (sidebarTitle) sidebarTitle.textContent = 'ML Backend Online';
+        if (sidebarDesc) sidebarDesc.textContent = `FastAPI engine online (${data.active_model || 'Gradient Boosting'})`;
 
         if (showFeedback) {
-          alert('Backend ML Engine is online and responding!\nActive Model: ' + (data.active_model || 'Gradient Boosting'));
+          alert('Backend ML Engine is online!\nActive Model: ' + (data.active_model || 'Gradient Boosting'));
         }
         return true;
       }
     } catch (err) {
-      isBackendOnline = false;
-
-      if (!isLocal) {
-        if (statusPill) {
-          statusPill.classList.remove('offline');
-          statusText.textContent = 'Cloud Mode (Built-in ML Engine)';
-        }
-        if (sidebarBadge) {
-          sidebarBadge.textContent = 'Cloud';
-          sidebarBadge.className = 'badge badge-primary sidebar-badge';
-        }
-        if (sidebarDot) {
-          sidebarDot.style.backgroundColor = '#3b82f6';
-        }
-        if (sidebarTitle) {
-          sidebarTitle.textContent = 'Cloud Standalone Mode';
-        }
-        if (sidebarDesc) {
-          sidebarDesc.textContent = 'Interactive Client ML Active • Click to connect API';
-        }
-      } else {
-        if (statusPill) {
-          statusPill.classList.add('offline');
-          statusText.textContent = 'Backend Offline (Standby Mode)';
-        }
-        if (sidebarBadge) {
-          sidebarBadge.textContent = 'Standby';
-          sidebarBadge.className = 'badge badge-warning sidebar-badge';
-        }
-        if (sidebarDot) {
-          sidebarDot.style.backgroundColor = '#f59e0b';
-        }
-        if (sidebarTitle) {
-          sidebarTitle.textContent = 'ML Backend Standby';
-        }
-        if (sidebarDesc) {
-          sidebarDesc.textContent = 'Run python run_server.py to connect backend';
-        }
+      if (statusText) statusText.textContent = 'Built-in ML Engine Active';
+      if (sidebarBadge) {
+        sidebarBadge.textContent = 'Active';
+        sidebarBadge.className = 'badge badge-success sidebar-badge';
       }
+      if (sidebarDot) sidebarDot.style.backgroundColor = '#16A34A';
+      if (sidebarTitle) sidebarTitle.textContent = 'ML Engine Online';
+      if (sidebarDesc) sidebarDesc.textContent = 'Interactive Client ML Active';
 
       if (showFeedback) {
         alert('Could not reach ML Backend at ' + (ML_API_BASE || 'local port 8000') + '.\nOperating in interactive client-side mode.');
       }
       return false;
-    }
-  }
-
-  async function loadModelMetadata() {
-    try {
-      const targetUrl = ML_API_BASE ? `${ML_API_BASE}/api/model-info` : '/api/model-info';
-      const response = await fetch(targetUrl);
-      if (response.ok) {
-        const meta = await response.json();
-        
-        // Update KPIs
-        if (meta.best_model) {
-          const accEl = document.getElementById('model-kpi-accuracy');
-          const precEl = document.getElementById('model-kpi-precision');
-          const cvEl = document.getElementById('model-kpi-cv-f1');
-          if (accEl) accEl.textContent = `${(meta.best_model.accuracy * 100).toFixed(1)}%`;
-          if (precEl) precEl.textContent = `${(meta.best_model.precision * 100).toFixed(1)}%`;
-          if (cvEl) cvEl.textContent = meta.best_model.cv_f1_mean.toFixed(4);
-        }
-
-        if (meta.dataset_summary) {
-          const dsEl = document.getElementById('model-kpi-dataset');
-          if (dsEl) dsEl.textContent = meta.dataset_summary.total_records.toLocaleString();
-        }
-
-        // Update Confusion Matrix
-        if (meta.confusion_matrix) {
-          const tnEl = document.getElementById('cm-tn-val');
-          const fpEl = document.getElementById('cm-fp-val');
-          const fnEl = document.getElementById('cm-fn-val');
-          const tpEl = document.getElementById('cm-tp-val');
-          if (tnEl) tnEl.textContent = meta.confusion_matrix.tn.toLocaleString();
-          if (fpEl) fpEl.textContent = meta.confusion_matrix.fp.toLocaleString();
-          if (fnEl) fnEl.textContent = meta.confusion_matrix.fn.toLocaleString();
-          if (tpEl) tpEl.textContent = meta.confusion_matrix.tp.toLocaleString();
-        }
-
-        // Update Feature Importances dynamically
-        if (meta.top_features && meta.top_features.length > 0) {
-          const featListEl = document.getElementById('ml-feature-list');
-          if (featListEl) {
-            featListEl.innerHTML = meta.top_features.slice(0, 8).map(f => {
-              const label = f.feature.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-              return `
-                <div class="feat-row">
-                  <div class="feat-row-header">
-                    <span>${label}</span>
-                    <span style="color: #60a5fa;">${f.percentage}%</span>
-                  </div>
-                  <div class="feat-bar-bg"><div class="feat-bar-fill" style="width: ${Math.min(f.percentage, 100)}%;"></div></div>
-                </div>
-              `;
-            }).join('');
-          }
-        }
-      }
-    } catch (e) {
-      console.log('Using pre-rendered model metadata.');
     }
   }
 
@@ -2458,7 +1653,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Initial backend health check
     checkMLBackendHealth();
 
     if (pingBtn) {

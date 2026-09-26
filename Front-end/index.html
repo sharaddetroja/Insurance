@@ -1,19 +1,20 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vehicle Insurance Fraud Data - Fraud Intelligence Platform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>InsureAI — Vehicle Insurance &amp; Risk Intelligence</title>
   
-  <!-- Font -->
+  <!-- Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   
   <!-- Styling -->
   <link rel="stylesheet" href="styles.css">
   
   <!-- CDNs for Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -23,91 +24,74 @@
   <!-- 1. Sign In / Login Page -->
   <div id="login-page">
     <div class="login-left-panel">
-      <!-- Animated network constellation canvas -->
-      <canvas id="constellation-canvas"></canvas>
+      <!-- 3D Vehicle Viewport -->
+      <div id="login-3d-viewport" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;"></div>
       
       <div class="login-left-content">
-        <span class="badge badge-primary-light" style="display: inline-flex; align-items: center; gap: 8px; width: fit-content; margin-bottom: 8px;">
-          <span class="status-dot animate-pulse-slow"></span>
+        <span class="badge badge-primary" style="display: inline-flex; align-items: center; gap: 6px; width: fit-content; margin-bottom: 12px;">
+          <span class="status-dot"></span>
           AI-Powered Risk Intelligence
         </span>
         
         <h2 class="login-left-title">
-          Predict Claim Risk with <span style="background: linear-gradient(to right, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">AI</span>
+          Vehicle Insurance <br><span>Made Smarter</span>
         </h2>
         
-        <p class="login-left-subtitle" style="line-height: 1.6; color: var(--text-secondary);">
-          Make smarter claim decisions using machine learning.
-          Analyze 30+ vehicle insurance features to predict fraud probability with 89.4% accuracy.
+        <p class="login-left-subtitle">
+          AI-powered fraud detection &amp; risk analytics. Evaluated across 30+ vehicle risk indicators using <strong>Gradient Boosting Classifier</strong>.
         </p>
         
         <div class="login-stats-row">
           <div class="login-stat-item">
             <h3>12,002</h3>
-            <p>Claim Records</p>
+            <p>Claims Processed</p>
           </div>
           <div class="login-stat-item">
             <h3>89.4%</h3>
             <p>Model Accuracy</p>
           </div>
           <div class="login-stat-item">
-            <h3>30+</h3>
-            <p>Features</p>
+            <h3>&lt; 1s</h3>
+            <p>Prediction Speed</p>
           </div>
         </div>
       </div>
       
       <!-- Floating Mock Cards -->
-      <!-- Card 1: Default/Fraud Rate -->
       <div class="floating-mock-card card-fraud-rate">
         <span class="mock-card-label">Fraud Rate</span>
-        <div class="mock-card-value">7.7%</div>
-        <div class="mock-card-diff text-danger" style="font-size: 10px;">▼ 0.4% vs last month</div>
-        <div class="mock-card-mini-chart">
-          <div style="height: 12px;"></div>
-          <div style="height: 16px;"></div>
-          <div style="height: 20px;"></div>
-          <div style="height: 14px;"></div>
-          <div style="height: 24px;"></div>
-        </div>
+        <div class="mock-card-value" style="color: var(--success-text);">7.7%</div>
+        <div class="mock-card-diff" style="font-size: 11px; color: var(--text-secondary); font-weight: 600;">▼ Low Anomaly Rate</div>
       </div>
       
-      <!-- Card 2: Avg Score -->
       <div class="floating-mock-card card-avg-score">
-        <span class="mock-card-label">Avg Claim Amount</span>
-        <div class="mock-card-value">$5,281</div>
-        <div class="mock-card-diff text-success" style="font-size: 10px;">▲ $120 improvement</div>
-      </div>
-      
-      <!-- Card 3: Model Accuracy -->
-      <div class="floating-mock-card card-model-accuracy">
-        <span class="mock-card-label">Model Accuracy</span>
-        <div class="mock-card-value">89.4%</div>
-        <div class="mock-card-diff" style="color: #60a5fa; font-size: 10px; font-weight: 600;">Gradient Boosting Classifier</div>
+        <span class="mock-card-label">Active Model</span>
+        <div class="mock-card-value" style="font-size: 16px; color: var(--primary); margin-top: 4px;">Gradient Boost</div>
+        <div class="mock-card-diff" style="font-size: 11px; color: var(--text-secondary); font-weight: 600;">5-Fold CV Champion</div>
       </div>
     </div>
     
     <div class="login-right-panel">
       <div class="login-form-container">
         <div class="login-logo-header">
-          <i data-lucide="shield" class="logo-icon" style="color: var(--primary); width: 28px; height: 28px;"></i>
-          <span style="font-weight: 800; font-size: 22px; color: #ffffff;">Vehicle Insurance <span style="color: var(--primary);">Fraud Data</span></span>
+          <i data-lucide="shield-check" class="logo-icon" style="width: 34px; height: 34px;"></i>
+          <span>Insure<span style="color: var(--primary);">AI</span></span>
         </div>
         
         <h3 class="login-form-title">Welcome back</h3>
-        <p class="login-form-subtitle">Sign in to your AI dashboard to continue.</p>
+        <p class="login-form-subtitle">Sign in to access your risk intelligence command center.</p>
         
         <form id="form-login" onsubmit="event.preventDefault(); if (window.loginToDashboard) window.loginToDashboard(); return false;">
-          <div class="form-group" style="margin-bottom: 16px;">
-            <label for="login-email" style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; display: block;">Email Address</label>
+          <div class="form-group">
+            <label for="login-email">Email Address</label>
             <div class="input-with-icon">
-              <input type="email" id="login-email" class="form-control" value="analyst@vehicleinsurancefraud.com" placeholder="analyst@vehicleinsurancefraud.com" required>
+              <input type="email" id="login-email" class="form-control" value="analyst@insureai.com" placeholder="analyst@insureai.com" required>
               <i data-lucide="mail"></i>
             </div>
           </div>
           
           <div class="form-group" style="margin-bottom: 20px;">
-            <label for="login-password" style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; display: block;">Password</label>
+            <label for="login-password">Password</label>
             <div class="input-with-icon">
               <input type="password" id="login-password" class="form-control" value="password" required>
               <i data-lucide="lock"></i>
@@ -117,25 +101,25 @@
             </div>
           </div>
           
-          <div class="form-options" style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
+          <div class="form-options" style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
             <label class="checkbox-container" style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-secondary);">
-              <input type="checkbox" checked style="cursor: pointer;">
-              <span class="checkbox-label">Remember me</span>
+              <input type="checkbox" checked style="cursor: pointer; accent-color: var(--primary);">
+              <span>Remember me</span>
             </label>
-            <a href="#" class="forgot-pwd-link" style="color: var(--primary); text-decoration: none; font-weight: 600;">Forgot password?</a>
+            <a href="#" class="forgot-pwd-link" style="color: var(--primary); font-weight: 600;">Forgot password?</a>
           </div>
           
-          <button type="button" id="btn-login-submit" class="btn btn-primary btn-submit-login" style="width: 100%; justify-content: center; padding: 12px 24px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); border: none; font-weight: 600;" onclick="if (window.loginToDashboard) { window.loginToDashboard(); }">
+          <button type="button" id="btn-login-submit" class="btn btn-primary btn-submit-login" style="width: 100%; justify-content: center; padding: 12px 24px; font-weight: 700;" onclick="if (window.loginToDashboard) { window.loginToDashboard(); }">
             <span>Sign In to Dashboard</span>
           </button>
 
-          <button type="button" id="btn-login-demo" class="btn btn-secondary-outline btn-demo-login" style="width: 100%; justify-content: center; padding: 12px 24px; display: flex; align-items: center; gap: 8px; font-weight: 600;" onclick="if (window.loginToDashboard) { window.loginToDashboard(); }">
-            <i data-lucide="user-check" style="width: 18px; height: 18px;"></i>
+          <button type="button" id="btn-login-demo" class="btn btn-secondary-outline btn-demo-login" style="width: 100%; justify-content: center; padding: 12px 24px; display: flex; align-items: center; gap: 8px; font-weight: 600; margin-top: 10px;" onclick="if (window.loginToDashboard) { window.loginToDashboard(); }">
+            <i data-lucide="user-check" style="width: 18px; height: 18px; color: var(--primary);"></i>
             <span>Continue with Demo Account</span>
           </button>
           
-          <p class="login-signup-prompt" style="font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 24px;">
-            Don't have an account? <a href="#" class="signup-link" style="color: var(--primary); font-weight: 600; text-decoration: none;">Create account</a>
+          <p class="login-signup-prompt" style="font-size: 13px; color: var(--text-muted); text-align: center; margin-top: 24px;">
+            Need assistance? <a href="#" style="color: var(--primary); font-weight: 600;">Contact Support</a>
           </p>
         </form>
       </div>
@@ -145,39 +129,42 @@
   <!-- 2. Main Dashboard Application (hidden initially) -->
   <div id="app-container" style="display: none; min-height: 100vh; width: 100%;">
 
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
+
     <!-- Sidebar Navigation -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="app-sidebar">
       <div class="sidebar-header">
         <div class="logo-container">
-          <i data-lucide="shield" class="logo-icon"></i>
+          <i data-lucide="shield-check" class="logo-icon"></i>
           <div class="logo-text">
-            <h1>Insurance Fraud</h1>
-            <span>Fraud Intelligence</span>
+            <h1>Insure<span style="color: var(--primary);">AI</span></h1>
+            <span>Risk Intelligence</span>
           </div>
         </div>
       </div>
       
-      <div class="sidebar-section-header">MAIN MENU</div>
+      <div class="sidebar-section-header">MAIN NAVIGATION</div>
       
       <nav class="sidebar-menu">
         <ul>
           <li>
             <a href="#" class="nav-link active" data-tab="overview">
               <i data-lucide="layout-dashboard"></i>
-              <span>Dashboard</span>
-            </a>
-          </li>
-          <li>
-            <a href="#" class="nav-link" data-tab="predictor">
-              <i data-lucide="shield-alert"></i>
-              <span>Fraud Detection</span>
-              <span class="badge badge-danger sidebar-badge">AI</span>
+              <span>Home</span>
             </a>
           </li>
           <li>
             <a href="#" class="nav-link" data-tab="explorer">
               <i data-lucide="file-text"></i>
-              <span>Claims</span>
+              <span>Claims Explorer</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-link" data-tab="predictor">
+              <i data-lucide="shield-alert"></i>
+              <span>Risk Check</span>
+              <span class="badge badge-primary sidebar-badge">AI</span>
             </a>
           </li>
           <li>
@@ -188,997 +175,1050 @@
           </li>
           <li>
             <a href="#" class="nav-link" data-tab="dataprep">
-              <i data-lucide="brain"></i>
-              <span>ML Model</span>
-              <span class="badge badge-success sidebar-badge" id="sidebar-ml-badge">AI</span>
+              <i data-lucide="cpu"></i>
+              <span>Model Info</span>
+              <span class="badge badge-success sidebar-badge" id="sidebar-ml-badge">Active</span>
             </a>
           </li>
         </ul>
       </nav>
     
-    <div class="sidebar-footer">
-      <ul style="list-style: none; margin-bottom: 16px;">
-        <li style="margin-bottom: 4px;">
-          <a href="#" class="nav-link" id="btn-settings" style="padding: 8px 16px;">
-            <i data-lucide="settings" style="width: 16px; height: 16px;"></i>
-            <span>Settings</span>
-          </a>
-        </li>
-        <li>
-          <a href="#" class="nav-link" id="btn-help" style="padding: 8px 16px;">
-            <i data-lucide="help-circle" style="width: 16px; height: 16px;"></i>
-            <span>Help Center</span>
-          </a>
-        </li>
-      </ul>
-      <div class="system-status-card">
-        <div class="status-header">
-          <span class="status-dot" id="system-status-dot"></span>
-          <strong id="system-status-text">ML Backend Online</strong>
+      <div class="sidebar-footer">
+        <ul style="list-style: none; margin-bottom: 14px;">
+          <li style="margin-bottom: 2px;">
+            <a href="#" class="nav-link" id="btn-settings" style="padding: 6px 12px; font-size: 13px;">
+              <i data-lucide="settings" style="width: 16px; height: 16px;"></i>
+              <span>Settings</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-link" id="btn-help" style="padding: 6px 12px; font-size: 13px;">
+              <i data-lucide="help-circle" style="width: 16px; height: 16px;"></i>
+              <span>Help Center</span>
+            </a>
+          </li>
+        </ul>
+        <div class="system-status-card">
+          <div class="status-header">
+            <span class="status-dot" id="system-status-dot"></span>
+            <strong id="system-status-text" style="font-size: 12px;">ML Engine Online</strong>
+          </div>
+          <p id="system-status-desc">Active Model: Gradient Boosting Classifier</p>
         </div>
-        <p id="system-status-desc">FastAPI engine connected on :8000 (Gradient Boosting)</p>
       </div>
-    </div>
-  </aside>
+    </aside>
 
-  <!-- Main Content Container -->
-  <main class="main-content">
-    <header class="content-header">
-      <div class="header-left">
-        <h2 id="page-title">Fraud Detection Dashboard</h2>
-        <p id="page-subtitle" class="text-secondary">Monitor and analyze vehicle insurance claims using machine learning.</p>
-      </div>
-      
-      <div class="header-center">
-        <div class="header-search-box">
-          <i data-lucide="search"></i>
-          <input type="text" id="global-search" placeholder="Search claims...">
-        </div>
-      </div>
-      
-      <div class="header-right">
-        <!-- Active Model Pill -->
-        <div class="header-model-pill" id="header-model-pill" title="Current Active ML Model">
-          <i data-lucide="cpu" class="model-pill-icon"></i>
-          <span class="model-pill-label">Model:</span>
-          <span class="model-pill-name" id="header-active-model-name">Gradient Boosting</span>
-        </div>
-
-        <!-- Theme Color Picker Dropdown -->
-        <div class="theme-color-picker-wrap" id="theme-color-picker-wrap" title="Change Theme Accent Color">
-          <button class="header-icon-btn theme-palette-btn" id="theme-palette-btn" aria-label="Choose Accent Palette">
-            <i data-lucide="palette"></i>
+    <!-- Main Content Container -->
+    <main class="main-content">
+      <header class="content-header">
+        <div style="display: flex; align-items: center;">
+          <button id="btn-mobile-menu" class="mobile-menu-btn" aria-label="Open Navigation">
+            <i data-lucide="menu" style="width: 20px; height: 20px;"></i>
           </button>
-          <div class="theme-color-popover" id="theme-color-popover">
-            <span class="popover-title">Color Theme</span>
-            <div class="color-options-grid">
-              <button type="button" class="color-dot-opt active" data-color-theme="emerald" title="Emerald & Mint Fintech (Default)" style="background: linear-gradient(135deg, #10b981, #06b6d4);"></button>
-              <button type="button" class="color-dot-opt" data-color-theme="violet" title="Nebula Violet & Indigo" style="background: linear-gradient(135deg, #8b5cf6, #ec4899);"></button>
-              <button type="button" class="color-dot-opt" data-color-theme="sapphire" title="Electric Blue & Sapphire" style="background: linear-gradient(135deg, #3b82f6, #6366f1);"></button>
-              <button type="button" class="color-dot-opt" data-color-theme="amber" title="Sunset Amber & Crimson" style="background: linear-gradient(135deg, #f59e0b, #ef4444);"></button>
-              <button type="button" class="color-dot-opt" data-color-theme="cyberpunk" title="Neon Cyan & Lime" style="background: linear-gradient(135deg, #06b6d4, #84cc16);"></button>
-            </div>
+          <div class="header-left">
+            <h2 id="page-title">Insurance Dashboard</h2>
+            <p id="page-subtitle">Check claims, analyze risk, and detect suspicious insurance activity.</p>
           </div>
         </div>
-
-        <!-- Theme Toggle button -->
-        <button id="theme-toggle" class="header-icon-btn" aria-label="Toggle Theme">
-          <i data-lucide="sun" class="sun-icon"></i>
-          <i data-lucide="moon" class="moon-icon"></i>
-        </button>
         
-        <!-- Notification button -->
-        <button class="header-icon-btn" aria-label="Notifications">
-          <i data-lucide="bell"></i>
-          <span class="notification-dot"></span>
-        </button>
-
-        <!-- System Pill -->
-        <div class="system-pill">
-          <span class="status-dot"></span>
-          <span>System Online</span>
-        </div>
-
-        <!-- Predict Shortcut -->
-        <button id="header-btn-detect" class="btn btn-primary">
-          <i data-lucide="shield-alert"></i>
-          <span>Detect Fraud</span>
-        </button>
-      </div>
-    </header>
-
-    <!-- Tab Sections -->
-    <div class="content-body">
-      
-      <!-- TAB 1: OVERVIEW -->
-      <section id="overview-tab" class="tab-panel active">
-        <!-- Hero Section matching Reference Site Style -->
-        <div class="hero-section">
-          <div class="hero-content">
-            <h1>Vehicle Insurance Fraud Risk Intelligence</h1>
-            <p>Real-time machine learning analytics and claim risk assessment powered by gradient-boosted decision ensembles.</p>
-          </div>
-          <div class="hero-illustration">
-            <div class="pulse-ring"></div>
-            <div class="pulse-ring delay-1"></div>
-            <div class="pulse-ring delay-2"></div>
-            <i data-lucide="shield-alert" style="width: 52px; height: 52px; color: var(--primary); z-index: 2; position: relative;"></i>
+        <div class="header-center">
+          <div class="header-search-box">
+            <i data-lucide="search"></i>
+            <input type="text" id="global-search" placeholder="Search claims by Policy #, State, Make..." autocomplete="off">
+            <kbd class="header-search-shortcut">⌘K</kbd>
           </div>
         </div>
-
-        <!-- KPI Row -->
-        <div class="kpi-grid">
-          <div class="kpi-card">
-            <div class="kpi-icon-wrapper info">
-              <i data-lucide="file-text"></i>
-            </div>
-            <div class="kpi-data">
-              <span class="kpi-label">Total Claims</span>
-              <h3 class="kpi-value" id="kpi-total-claims">12,002</h3>
-            </div>
+        
+        <div class="header-right">
+          <!-- Active Model Pill (Highlighted) -->
+          <div class="header-model-pill" id="header-model-pill" title="Current Active ML Classifier">
+            <i data-lucide="cpu" class="model-pill-icon"></i>
+            <span class="model-pill-label">Model:</span>
+            <span class="model-pill-name" id="header-active-model-name">Gradient Boosting Classifier</span>
           </div>
+
+          <!-- Notification button -->
+          <button class="header-icon-btn" aria-label="Notifications">
+            <i data-lucide="bell"></i>
+            <span class="notification-dot"></span>
+          </button>
+
+          <!-- System Pill -->
+          <div class="system-pill">
+            <span class="status-dot"></span>
+            <span>Online</span>
+          </div>
+
+          <!-- Quick Check Risk CTA -->
+          <button id="header-btn-detect" class="btn btn-primary" onclick="const pLink = document.querySelector('.nav-link[data-tab=\'predictor\']'); if (pLink) pLink.click();">
+            <i data-lucide="shield-check"></i>
+            <span>Check Risk</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Tab Sections -->
+      <div class="content-body">
+        
+        <!-- TAB 1: OVERVIEW (HOMEPAGE) -->
+        <section id="overview-tab" class="tab-panel active">
           
-          <div class="kpi-card">
-            <div class="kpi-icon-wrapper danger">
-              <i data-lucide="alert-triangle"></i>
+          <!-- HERO SECTION (CLEAN 2-COLUMN GRID - NO TEXT OVERLAP) -->
+          <div class="hero-section">
+            <div class="hero-content">
+              <span class="hero-badge">
+                <i data-lucide="cpu" style="width: 14px; height: 14px;"></i>
+                AI-Powered Risk Intelligence
+              </span>
+              <h1>Vehicle Insurance Made Smarter</h1>
+              <p>Check claims, analyze risk, and detect suspicious insurance activity easily with high-precision machine learning.</p>
+              
+              <!-- Active Model Callout -->
+              <div class="hero-model-callout">
+                <i data-lucide="brain" style="width: 16px; height: 16px; color: var(--primary);"></i>
+                <span>Active ML Model: <strong id="hero-model-name">Gradient Boosting Classifier (Champion 5-Fold)</strong></span>
+              </div>
+              
+              <div class="hero-actions">
+                <button class="btn btn-primary" onclick="const predLink = document.querySelector('.nav-link[data-tab=\'predictor\']'); if (predLink) predLink.click();">
+                  <i data-lucide="shield-check"></i>
+                  <span>Check Claim Risk →</span>
+                </button>
+                <button class="btn btn-secondary" onclick="const expLink = document.querySelector('.nav-link[data-tab=\'explorer\']'); if (expLink) expLink.click();">
+                  <i data-lucide="file-text"></i>
+                  <span>View Claims</span>
+                </button>
+              </div>
             </div>
-            <div class="kpi-data">
-              <span class="kpi-label">Fraud Detected</span>
-              <h3 class="kpi-value" id="kpi-fraud-count">923</h3>
-            </div>
-          </div>
-          
-          <div class="kpi-card">
-            <div class="kpi-icon-wrapper success">
-              <i data-lucide="shield-check"></i>
-            </div>
-            <div class="kpi-data">
-              <span class="kpi-label">Genuine Claims</span>
-              <h3 class="kpi-value" id="kpi-genuine-count">11,079</h3>
+
+            <!-- 3D Vehicle Visualizer (Strictly Separated in Grid Column) -->
+            <div class="hero-3d-container">
+              <div class="hero-floating-tags">
+                <div class="hero-tag">
+                  <span style="color: var(--primary); font-weight: 700;">Status:</span> Protected
+                </div>
+              </div>
+              <div id="hero-3d-viewport"></div>
             </div>
           </div>
 
-          <div class="kpi-card">
-            <div class="kpi-icon-wrapper purple">
-              <i data-lucide="activity"></i>
+          <!-- MAIN QUICK ACTIONS SECTION -->
+          <div class="quick-actions-section">
+            <div class="section-heading-row">
+              <h3>What would you like to do?</h3>
             </div>
-            <div class="kpi-data">
-              <span class="kpi-label">Fraud Rate</span>
-              <h3 class="kpi-value" id="kpi-fraud-rate">7.7%</h3>
-            </div>
-          </div>
-        </div>
+            <div class="quick-actions-grid">
+              <div class="action-card" onclick="const pLink = document.querySelector('.nav-link[data-tab=\'predictor\']'); if (pLink) pLink.click();">
+                <div>
+                  <div class="action-card-icon-wrap blue">
+                    <i data-lucide="shield-alert" style="width: 22px; height: 22px;"></i>
+                  </div>
+                  <h4>Check Claim Risk</h4>
+                  <p>Analyze an individual vehicle insurance claim to estimate fraud probability instantly.</p>
+                </div>
+                <span class="action-card-cta">Check Risk →</span>
+              </div>
 
-        <!-- Dashboard Charts -->
-        <div class="chart-grid">
-          <div class="card chart-card lg">
-            <div class="card-header">
-              <h4 class="card-title">Fraud Detection Overview</h4>
-              <p class="card-subtitle">Claim analysis over the last 6 months</p>
-            </div>
-            <div class="chart-container">
-              <canvas id="chart-severity-fraud"></canvas>
-            </div>
-          </div>
+              <div class="action-card" onclick="const eLink = document.querySelector('.nav-link[data-tab=\'explorer\']'); if (eLink) eLink.click();">
+                <div>
+                  <div class="action-card-icon-wrap teal">
+                    <i data-lucide="file-text" style="width: 22px; height: 22px;"></i>
+                  </div>
+                  <h4>View Claims</h4>
+                  <p>Search, filter, and inspect detailed insurance claim records and history.</p>
+                </div>
+                <span class="action-card-cta">View Claims →</span>
+              </div>
 
-          <div class="card chart-card">
-            <div class="card-header">
-              <h4 class="card-title">Claim Distribution</h4>
-              <p class="card-subtitle">Current claim status</p>
-            </div>
-            <div class="chart-container" style="position: relative;">
-              <canvas id="chart-claim-payouts"></canvas>
-              <div class="chart-center-text" id="doughnut-center-text">
-                <span class="center-value" style="font-size: 24px; font-weight: 800; color: #ffffff; display: block; text-align: center; line-height: 1.1;">92.3%</span>
-                <span class="center-label" style="font-size: 10px; color: var(--text-secondary); display: block; text-align: center; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;">Genuine</span>
+              <div class="action-card" onclick="const aLink = document.querySelector('.nav-link[data-tab=\'analytics\']'); if (aLink) aLink.click();">
+                <div>
+                  <div class="action-card-icon-wrap purple">
+                    <i data-lucide="bar-chart-2" style="width: 22px; height: 22px;"></i>
+                  </div>
+                  <h4>Analytics</h4>
+                  <p>Understand overall claim distribution, payout patterns, and fraud trends.</p>
+                </div>
+                <span class="action-card-cta">View Analytics →</span>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Recent Claims Table -->
-        <div class="card dashboard-table-card" style="margin-top: 24px;">
-          <div class="table-card-header">
-            <div>
-              <h4 class="card-title">Recent Claims</h4>
-              <p class="card-subtitle">Latest insurance claims analyzed by the system</p>
-            </div>
-            <button id="dashboard-view-all-claims" class="btn btn-secondary-outline" style="padding: 6px 12px; font-size: 12px;">
-              <span>View All</span>
-              <i data-lucide="arrow-up-right" style="width: 14px; height: 14px;"></i>
-            </button>
-          </div>
-          <div class="table-container">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Policy #</th>
-                  <th>Age</th>
-                  <th>State</th>
-                  <th>Incident Type</th>
-                  <th>Severity</th>
-                  <th>Total Claim</th>
-                  <th>Fraud?</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody id="dashboard-recent-table-body">
-                <!-- Dynamically filled -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 2: DATA EXPLORER -->
-      <section id="explorer-tab" class="tab-panel">
-        <!-- Explorer Header Info with upload option -->
-        <div class="explorer-top-bar card" style="margin-bottom: 24px; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center;">
-          <div>
-            <h4 class="card-title" style="margin: 0;">Claims Database Explorer</h4>
-            <p class="card-subtitle" style="margin: 4px 0 0 0;">Search, filter, and inspect detailed claim records</p>
-          </div>
-          <div style="display: flex; gap: 8px;">
-            <div class="file-upload-wrapper">
-              <label for="csv-upload" class="btn btn-outline">
-                <i data-lucide="upload-cloud"></i>
-                <span>Upload custom CSV</span>
-              </label>
-              <input type="file" id="csv-upload" accept=".csv" style="display: none;">
-            </div>
-            <button id="reset-data" class="btn btn-secondary" style="display: none;">
-              <i data-lucide="rotate-ccw"></i>
-              <span>Reset Default</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="card table-card">
-          <div class="table-toolbar">
-            <div class="search-box">
-              <i data-lucide="search"></i>
-              <input type="text" id="explorer-search" placeholder="Search by Policy #, City, or Auto Make...">
+          <!-- 4 ESSENTIAL KPI CARDS -->
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <span class="kpi-label">Total Claims</span>
+                <div class="kpi-icon-wrapper info">
+                  <i data-lucide="file-text"></i>
+                </div>
+              </div>
+              <h3 class="kpi-value" id="kpi-total-claims">12,002</h3>
+              <div class="kpi-trend positive">
+                <i data-lucide="trending-up" style="width: 14px; height: 14px;"></i>
+                <span>All processed claims</span>
+              </div>
             </div>
             
-            <div class="filters-container">
-              <select id="filter-fraud" class="select-input">
-                <option value="ALL">All Fraud Statuses</option>
-                <option value="Fraudulent">Fraudulent</option>
-                <option value="Genuine">Genuine</option>
-                <option value="Under Review">Under Review</option>
-              </select>
-              
-              <select id="filter-severity" class="select-input">
-                <option value="ALL">All Severities</option>
-                <option value="Major Damage">Major Damage</option>
-                <option value="Minor Damage">Minor Damage</option>
-                <option value="Total Loss">Total Loss</option>
-                <option value="Trivial Damage">Trivial Damage</option>
-              </select>
-              
-              <select id="filter-state" class="select-input">
-                <option value="ALL">All Policy States</option>
-                <option value="OH">OH</option>
-                <option value="IN">IN</option>
-                <option value="IL">IL</option>
-              </select>
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <span class="kpi-label">Fraud Detected</span>
+                <div class="kpi-icon-wrapper danger">
+                  <i data-lucide="alert-triangle"></i>
+                </div>
+              </div>
+              <h3 class="kpi-value" id="kpi-fraud-count" style="color: var(--danger-text);">923</h3>
+              <div class="kpi-trend negative">
+                <i data-lucide="alert-circle" style="width: 14px; height: 14px;"></i>
+                <span>Flagged for review</span>
+              </div>
+            </div>
+            
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <span class="kpi-label">Genuine Claims</span>
+                <div class="kpi-icon-wrapper success">
+                  <i data-lucide="shield-check"></i>
+                </div>
+              </div>
+              <h3 class="kpi-value" id="kpi-genuine-count" style="color: var(--success-text);">11,079</h3>
+              <div class="kpi-trend positive">
+                <i data-lucide="check" style="width: 14px; height: 14px;"></i>
+                <span>Approved claims</span>
+              </div>
+            </div>
 
-              <button id="clear-filters" class="btn btn-secondary-outline">
-                Clear
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <span class="kpi-label">Fraud Rate</span>
+                <div class="kpi-icon-wrapper purple">
+                  <i data-lucide="activity"></i>
+                </div>
+              </div>
+              <h3 class="kpi-value" id="kpi-fraud-rate" style="color: #C084FC;">7.7%</h3>
+              <div class="kpi-trend positive">
+                <i data-lucide="arrow-down" style="width: 14px; height: 14px;"></i>
+                <span>Low risk baseline</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- KEY CHARTS -->
+          <div class="chart-grid">
+            <div class="card chart-card">
+              <div class="card-header">
+                <div>
+                  <h4 class="card-title">
+                    <i data-lucide="bar-chart-2" style="color: var(--primary); width: 18px; height: 18px;"></i>
+                    Fraud Detection Overview
+                  </h4>
+                  <p class="card-subtitle">Claim volume vs flagged fraud cases</p>
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas id="chart-severity-fraud"></canvas>
+              </div>
+            </div>
+
+            <div class="card chart-card">
+              <div class="card-header">
+                <div>
+                  <h4 class="card-title">
+                    <i data-lucide="pie-chart" style="color: var(--secondary); width: 18px; height: 18px;"></i>
+                    Claim Distribution
+                  </h4>
+                  <p class="card-subtitle">Genuine vs fraudulent ratio</p>
+                </div>
+              </div>
+              <div class="chart-container" style="position: relative;">
+                <canvas id="chart-claim-payouts"></canvas>
+                <div class="chart-center-text" id="doughnut-center-text">
+                  <span class="center-value" style="font-size: 22px; font-weight: 800; color: var(--text-primary); display: block;">92.3%</span>
+                  <span class="center-label" style="font-size: 11px; color: var(--text-secondary); display: block;">Genuine</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Claims Table -->
+          <div class="card dashboard-table-card" style="margin-top: 24px;">
+            <div class="table-card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <div>
+                <h4 class="card-title">
+                  <i data-lucide="clock" style="color: var(--primary); width: 18px; height: 18px;"></i>
+                  Recent Claims
+                </h4>
+                <p class="card-subtitle">Latest insurance claims analyzed by the system</p>
+              </div>
+              <button id="dashboard-view-all-claims" class="btn btn-secondary-outline" style="padding: 6px 12px; font-size: 12px;" onclick="const eLink = document.querySelector('.nav-link[data-tab=\'explorer\']'); if (eLink) eLink.click();">
+                <span>View Full Database</span>
+                <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
+              </button>
+            </div>
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Policy #</th>
+                    <th>Age</th>
+                    <th>State</th>
+                    <th>Incident Type</th>
+                    <th>Severity</th>
+                    <th>Total Claim</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="dashboard-recent-table-body">
+                  <!-- Dynamically filled -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 2: CLAIMS EXPLORER -->
+        <section id="explorer-tab" class="tab-panel">
+          <div class="explorer-top-bar card" style="margin-bottom: 20px; padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h4 class="card-title" style="margin: 0; font-size: 18px;">
+                <i data-lucide="database" style="color: var(--primary); width: 20px; height: 20px;"></i>
+                Claims Database Explorer
+              </h4>
+              <p class="card-subtitle" style="margin: 4px 0 0 0;">Search, filter, and inspect detailed claim records</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <div class="file-upload-wrapper">
+                <label for="csv-upload" class="btn btn-outline" style="cursor: pointer;">
+                  <i data-lucide="upload-cloud"></i>
+                  <span>Upload CSV</span>
+                </label>
+                <input type="file" id="csv-upload" accept=".csv" style="display: none;">
+              </div>
+              <button id="reset-data" class="btn btn-secondary" style="display: none;">
+                <i data-lucide="rotate-ccw"></i>
+                <span>Reset Default</span>
               </button>
             </div>
           </div>
 
-          <div class="table-container">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th class="sortable" data-col="policy_number">Policy # <span class="sort-icon">↕</span></th>
-                  <th class="sortable" data-col="age">Age <span class="sort-icon">↕</span></th>
-                  <th class="sortable" data-col="policy_state">State <span class="sort-icon">↕</span></th>
-                  <th class="sortable" data-col="incident_type">Incident Type <span class="sort-icon">↕</span></th>
-                  <th class="sortable" data-col="incident_severity">Severity <span class="sort-icon">↕</span></th>
-                  <th class="sortable" data-col="total_claim_amount">Total Claim <span class="sort-icon">↕</span></th>
-                  <th class="sortable" data-col="fraud_reported">Fraud? <span class="sort-icon">↕</span></th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody id="claims-table-body">
-                <!-- Dynamically filled -->
-              </tbody>
-            </table>
-          </div>
-
-          <div class="table-pagination">
-            <span class="pagination-info" id="pagination-info">Showing 0-0 of 0 claims</span>
-            <div class="pagination-controls">
-              <button id="prev-page" class="pagination-btn"><i data-lucide="chevron-left"></i></button>
-              <div id="page-numbers" class="page-numbers-container"></div>
-              <button id="next-page" class="pagination-btn"><i data-lucide="chevron-right"></i></button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 3: ANALYTICS -->
-      <section id="analytics-tab" class="tab-panel">
-        <!-- KPI Row -->
-        <div class="kpi-grid" style="margin-bottom: 24px;">
-          <div class="kpi-card">
-            <div class="kpi-icon-wrapper danger">
-              <i data-lucide="alert-triangle"></i>
-            </div>
-            <div class="kpi-data">
-              <span class="kpi-label">Fraud Rate</span>
-              <h3 class="kpi-value" id="an-fraud-rate">38.4%</h3>
-              <span class="kpi-change danger-text" style="font-size: 11px; margin-top: 4px; display: inline-flex; align-items: center; gap: 4px; font-weight: 600;">
-                ▲ +4.2% <span style="color: var(--text-muted); font-weight: 500;">vs previous period</span>
-              </span>
-            </div>
-          </div>
-          
-          <div class="kpi-card">
-            <div class="kpi-icon-wrapper success">
-              <i data-lucide="shield-check"></i>
-            </div>
-            <div class="kpi-data">
-              <span class="kpi-label">Genuine Rate</span>
-              <h3 class="kpi-value" id="an-genuine-rate">61.6%</h3>
-              <span class="kpi-change success-text" style="font-size: 11px; margin-top: 4px; display: inline-flex; align-items: center; gap: 4px; font-weight: 600;">
-                ▼ -4.2% <span style="color: var(--text-muted); font-weight: 500;">vs previous period</span>
-              </span>
-            </div>
-          </div>
-          
-          <div class="kpi-card">
-            <div class="kpi-icon-wrapper info">
-              <i data-lucide="indian-rupee"></i>
-            </div>
-            <div class="kpi-data">
-              <span class="kpi-label">Avg Claim</span>
-              <h3 class="kpi-value" id="an-avg-claim">₹68.4K</h3>
-              <span class="kpi-change info-text" style="font-size: 11px; margin-top: 4px; display: inline-flex; align-items: center; gap: 4px; font-weight: 600;">
-                ▲ +7.8% <span style="color: var(--text-muted); font-weight: 500;">average claim amount</span>
-              </span>
-            </div>
-          </div>
-          
-          <div class="kpi-card">
-            <div class="kpi-icon-wrapper purple">
-              <i data-lucide="activity"></i>
-            </div>
-            <div class="kpi-data">
-              <span class="kpi-label">Detection Accuracy</span>
-              <h3 class="kpi-value" id="an-accuracy">94.2%</h3>
-              <span class="kpi-change purple-text" style="font-size: 11px; margin-top: 4px; display: inline-flex; align-items: center; gap: 4px; font-weight: 600;">
-                ▲ +2.1% <span style="color: var(--text-muted); font-weight: 500;">model performance</span>
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Fraud vs Genuine Main Container -->
-        <div class="card" style="padding: 24px; margin-bottom: 24px;">
-          <div class="card-header" style="margin-bottom: 20px;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <div style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.15); width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: var(--purple);">
-                <i data-lucide="bar-chart-3" style="width: 16px; height: 16px;"></i>
-              </div>
-              <div>
-                <h4 class="card-title" style="margin: 0;">Fraud vs Genuine Claims</h4>
-                <p class="card-subtitle" style="margin: 2px 0 0 0;">Overall distribution of analyzed insurance claims</p>
-              </div>
-            </div>
-          </div>
-          
-          <div class="analytics-main-split" style="display: flex; gap: 40px; align-items: center;">
-            <div class="analytics-chart-area" style="flex: 2; height: 260px; position: relative;">
-              <canvas id="chart-analytics-severity" style="width: 100%; height: 100%;"></canvas>
-            </div>
-            
-            <div class="analytics-summary-side" style="flex: 1; display: flex; flex-direction: column; gap: 12px; border-left: 1px solid var(--border-color); padding-left: 40px;">
-              <div class="an-summary-row" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.04);">
-                <span style="font-size: 13px; color: var(--text-secondary);">Total Claims</span>
-                <strong style="font-size: 16px; color: #ffffff;" id="an-total-claims">1,247</strong>
-              </div>
-              <div class="an-summary-row" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.04);">
-                <span style="font-size: 13px; color: var(--text-secondary);">Fraudulent Claims</span>
-                <strong style="font-size: 16px; color: #ef4444;" id="an-fraudulent-claims">479</strong>
-              </div>
-              <div class="an-summary-row" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.04);">
-                <span style="font-size: 13px; color: var(--text-secondary);">Genuine Claims</span>
-                <strong style="font-size: 16px; color: #10b981;" id="an-genuine-claims">768</strong>
+          <div class="card table-card">
+            <div class="table-toolbar">
+              <div class="search-box">
+                <i data-lucide="search"></i>
+                <input type="text" id="explorer-search" placeholder="Search by Policy #, City, or Auto Make...">
               </div>
               
-              <div class="an-highlight-tip" style="background: rgba(59, 130, 246, 0.06); border-radius: 8px; padding: 12px; border: 1px solid rgba(59, 130, 246, 0.12); display: flex; gap: 8px; margin-top: 8px;">
-                <i data-lucide="lightbulb" style="color: var(--primary); width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px;"></i>
-                <p style="font-size: 11px; color: var(--text-secondary); margin: 0; line-height: 1.4;" id="an-tip-text">
-                  Fraudulent claims represent approximately 38.4% of all analyzed claims.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Grid of 2x2 cards for stats -->
-        <div class="analytics-sub-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;">
-          <!-- Fraud by Vehicle Category -->
-          <div class="card" style="padding: 24px;">
-            <div class="card-header" style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-              <div style="background: rgba(37,99,235,0.08); border: 1px solid rgba(37,99,235,0.15); width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: var(--primary);">
-                <i data-lucide="car" style="width: 16px; height: 16px;"></i>
-              </div>
-              <div>
-                <h4 class="card-title" style="margin: 0;">Fraud by Vehicle Category</h4>
-                <p class="card-subtitle" style="margin: 2px 0 0 0;">Fraud distribution across vehicle types</p>
-              </div>
-            </div>
-            
-            <div style="height: 180px; position: relative;">
-              <canvas id="chart-analytics-vehicle" style="width: 100%; height: 100%;"></canvas>
-            </div>
-          </div>
-
-          <!-- Fraud by Accident Site -->
-          <div class="card" style="padding: 24px;">
-            <div class="card-header" style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-              <div style="background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.15); width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: var(--danger);">
-                <i data-lucide="map-pin" style="width: 16px; height: 16px;"></i>
-              </div>
-              <div>
-                <h4 class="card-title" style="margin: 0;">Fraud by Accident Site</h4>
-                <p class="card-subtitle" style="margin: 2px 0 0 0;">Fraud rate based on reported accident location</p>
-              </div>
-            </div>
-            
-            <div style="height: 180px; position: relative;">
-              <canvas id="chart-analytics-site" style="width: 100%; height: 100%;"></canvas>
-            </div>
-          </div>
-
-          <!-- Fraud by Driver Age -->
-          <div class="card" style="padding: 24px;">
-            <div class="card-header" style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-              <div style="background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.15); width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: var(--success);">
-                <i data-lucide="user" style="width: 16px; height: 16px;"></i>
-              </div>
-              <div>
-                <h4 class="card-title" style="margin: 0;">Fraud by Driver Age</h4>
-                <p class="card-subtitle" style="margin: 2px 0 0 0;">Fraud rate across different age groups</p>
-              </div>
-            </div>
-            
-            <div style="height: 180px; position: relative;">
-              <canvas id="chart-analytics-age" style="width: 100%; height: 100%;"></canvas>
-            </div>
-          </div>
-
-          <!-- Risk Distribution -->
-          <div class="card" style="padding: 24px;">
-            <div class="card-header" style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-              <div style="background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.15); width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: var(--purple);">
-                <i data-lucide="activity" style="width: 16px; height: 16px;"></i>
-              </div>
-              <div>
-                <h4 class="card-title" style="margin: 0;">Risk Distribution</h4>
-                <p class="card-subtitle" style="margin: 2px 0 0 0;">Distribution of model-generated risk levels</p>
-              </div>
-            </div>
-            
-            <div style="height: 180px; position: relative;">
-              <canvas id="chart-analytics-risk" style="width: 100%; height: 100%;"></canvas>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 4: RISK PREDICTOR (FRAUD DETECTION) -->
-      <section id="predictor-tab" class="tab-panel">
-        <div class="predictor-layout">
-          <!-- Input Form Panel -->
-          <div class="card predictor-form-card">
-            <div class="card-header">
-              <h4 class="card-title">Fraud Risk Profiler</h4>
-              <p class="card-subtitle">Input accident particulars to assess fraud risk probability</p>
-            </div>
-            
-            <form id="predictor-form" class="predictor-form">
-              <!-- Model Selection Cards Grid (Reference UI Style) -->
-              <div class="form-group" style="margin-bottom: 20px;">
-                <div class="model-selection-label-row" style="margin-bottom: 10px;">
-                  <label style="margin: 0; font-size: 12px; font-weight: 600; color: var(--text-secondary); display: flex; align-items: center; gap: 6px;">
-                    <i data-lucide="cpu" style="width: 15px; height: 15px; color: var(--primary);"></i>
-                    Select Machine Learning Model
-                  </label>
-                  <span class="badge badge-success-light" id="active-model-type-badge">Tuned Champion</span>
-                </div>
-                <div class="model-selection-grid" id="model-selection-cards">
-                  <div class="model-card selected" data-model="Gradient Boosting Classifier">
-                    <div class="model-card-header">
-                      <i data-lucide="cpu" class="model-icon"></i>
-                      <span class="model-title">Gradient Boost</span>
-                    </div>
-                    <p class="model-desc">Tuned 5-fold ensemble champion with optimal AUC-ROC.</p>
-                  </div>
-                  <div class="model-card" data-model="Random Forest Classifier">
-                    <div class="model-card-header">
-                      <i data-lucide="layers" class="model-icon"></i>
-                      <span class="model-title">Random Forest</span>
-                    </div>
-                    <p class="model-desc">Multi-tree bagging classifier for non-linear correlation.</p>
-                  </div>
-                  <div class="model-card" data-model="Logistic Regression">
-                    <div class="model-card-header">
-                      <i data-lucide="git-commit" class="model-icon"></i>
-                      <span class="model-title">Logistic Reg.</span>
-                    </div>
-                    <p class="model-desc">Standardized linear probability estimator with L2 penalty.</p>
-                  </div>
-                </div>
-                <select id="pred-model-select" class="select-input block model-select-highlight" style="display: none;">
-                  <option value="Gradient Boosting Classifier" selected>Gradient Boosting Classifier (Champion - Tuned 5-Fold CV)</option>
-                  <option value="Random Forest Classifier">Random Forest Classifier (Ensemble Bagging)</option>
-                  <option value="Logistic Regression">Logistic Regression (Standardized Linear)</option>
-                  <option value="AdaBoost Classifier">AdaBoost Classifier (Adaptive Boosting)</option>
-                  <option value="Decision Tree Classifier">Decision Tree Classifier (max_depth=6)</option>
+              <div class="filters-container">
+                <select id="filter-fraud" class="select-input">
+                  <option value="ALL">All Statuses</option>
+                  <option value="Fraudulent">Fraudulent</option>
+                  <option value="Genuine">Genuine</option>
+                  <option value="Under Review">Under Review</option>
                 </select>
-              </div>
-
-              <div class="form-group">
-                <label for="pred-severity">Incident Severity</label>
-                <select id="pred-severity" class="select-input block">
+                
+                <select id="filter-severity" class="select-input">
+                  <option value="ALL">All Severities</option>
                   <option value="Major Damage">Major Damage</option>
-                  <option value="Minor Damage" selected>Minor Damage</option>
+                  <option value="Minor Damage">Minor Damage</option>
                   <option value="Total Loss">Total Loss</option>
                   <option value="Trivial Damage">Trivial Damage</option>
                 </select>
+                
+                <select id="filter-state" class="select-input">
+                  <option value="ALL">All States</option>
+                  <option value="OH">OH</option>
+                  <option value="IN">IN</option>
+                  <option value="IL">IL</option>
+                </select>
+
+                <button id="clear-filters" class="btn btn-secondary-outline" style="padding: 8px 14px; font-size: 12px;">
+                  <i data-lucide="x" style="width: 14px; height: 14px;"></i>
+                  <span>Clear</span>
+                </button>
               </div>
+            </div>
 
-              <div class="form-grid">
-                <div class="form-group">
-                  <label for="pred-hobby">Insured Hobby</label>
-                  <select id="pred-hobby" class="select-input block">
-                    <option value="chess">Chess</option>
-                    <option value="yachting">Yachting</option>
-                    <option value="reading" selected>Reading</option>
-                    <option value="skydiving">Skydiving</option>
-                    <option value="cross-fit">Cross-fit</option>
-                    <option value="board-games">Board games</option>
-                    <option value="paintball">Paintball</option>
-                    <option value="camping">Camping</option>
-                    <option value="other">Other Hobbies</option>
-                  </select>
-                </div>
+            <!-- Desktop Full Table View -->
+            <div class="table-container desktop-table-view">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th class="sortable" data-col="policy_number">Policy # <span class="sort-icon">↕</span></th>
+                    <th class="sortable" data-col="age">Age <span class="sort-icon">↕</span></th>
+                    <th class="sortable" data-col="policy_state">State <span class="sort-icon">↕</span></th>
+                    <th class="sortable" data-col="incident_type">Incident Type <span class="sort-icon">↕</span></th>
+                    <th class="sortable" data-col="incident_severity">Severity <span class="sort-icon">↕</span></th>
+                    <th class="sortable" data-col="total_claim_amount">Total Claim <span class="sort-icon">↕</span></th>
+                    <th class="sortable" data-col="fraud_reported">Status <span class="sort-icon">↕</span></th>
+                    <th>Inspect</th>
+                  </tr>
+                </thead>
+                <tbody id="claims-table-body">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
 
-                <div class="form-group">
-                  <label for="pred-collision">Collision Type</label>
-                  <select id="pred-collision" class="select-input block">
-                    <option value="Front Collision" selected>Front Collision</option>
-                    <option value="Rear Collision">Rear Collision</option>
-                    <option value="Side Collision">Side Collision</option>
-                    <option value="?">Unknown / Missing</option>
-                  </select>
-                </div>
+            <!-- Mobile Responsive Card View -->
+            <div class="mobile-claims-cards-grid" id="mobile-claims-cards">
+              <!-- Dynamically rendered mobile cards -->
+            </div>
+
+            <div class="pagination-container">
+              <span id="pagination-info">Showing 1 - 10 of 12,002 entries</span>
+              <div class="pagination-controls">
+                <button id="prev-page" class="pagination-btn">
+                  <i data-lucide="chevron-left" style="width: 14px; height: 14px;"></i>
+                  <span>Previous</span>
+                </button>
+                <div id="page-numbers" style="display: flex; gap: 4px;"></div>
+                <button id="next-page" class="pagination-btn">
+                  <span>Next</span>
+                  <i data-lucide="chevron-right" style="width: 14px; height: 14px;"></i>
+                </button>
               </div>
+            </div>
+          </div>
+        </section>
 
-              <div class="form-grid">
-                <div class="form-group">
-                  <label for="pred-age">Driver Age: <span id="val-age">35</span></label>
-                  <input type="range" id="pred-age" min="18" max="70" value="35" class="slider-input">
-                </div>
-
-                <div class="form-group">
-                  <label for="pred-claim">Total Claim Amount: $<span id="val-claim">35,000</span></label>
-                  <input type="range" id="pred-claim" min="1000" max="120000" step="1000" value="35000" class="slider-input">
-                </div>
-              </div>
-
-              <div class="form-grid">
-                <div class="form-group">
-                  <label for="pred-witnesses">Witnesses Present</label>
-                  <select id="pred-witnesses" class="select-input block">
-                    <option value="0">0 Witnesses</option>
-                    <option value="1">1 Witness</option>
-                    <option value="2" selected>2 Witnesses</option>
-                    <option value="3">3 Witnesses</option>
-                  </select>
-                </div>
-
-                <div class="form-group">
-                  <label for="pred-injuries">Bodily Injuries</label>
-                  <select id="pred-injuries" class="select-input block">
-                    <option value="0">0 Injuries</option>
-                    <option value="1">1 Injury</option>
-                    <option value="2" selected>2 Injuries</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="form-grid">
-                <div class="form-group">
-                  <label for="pred-hour">Incident Hour (0 - 23): <span id="val-hour">12:00</span></label>
-                  <input type="range" id="pred-hour" min="0" max="23" value="12" class="slider-input">
-                </div>
-
-                <div class="form-group">
-                  <label for="pred-vehicles">Vehicles Involved</label>
-                  <select id="pred-vehicles" class="select-input block">
-                    <option value="1" selected>1 Vehicle</option>
-                    <option value="2">2 Vehicles</option>
-                    <option value="3">3 Vehicles</option>
-                    <option value="4">4+ Vehicles</option>
-                  </select>
+        <!-- TAB 3: ANALYTICS -->
+        <section id="analytics-tab" class="tab-panel">
+          <div class="kpi-grid" style="margin-bottom: 24px;">
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <span class="kpi-label">Fraudulent Rate</span>
+                <div class="kpi-icon-wrapper danger">
+                  <i data-lucide="alert-triangle"></i>
                 </div>
               </div>
-            </form>
+              <h3 class="kpi-value" id="an-fraud-rate" style="color: var(--danger-text);">38.4%</h3>
+              <span class="kpi-trend negative">Flagged anomaly percentage</span>
+            </div>
+            
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <span class="kpi-label">Genuine Rate</span>
+                <div class="kpi-icon-wrapper success">
+                  <i data-lucide="shield-check"></i>
+                </div>
+              </div>
+              <h3 class="kpi-value" id="an-genuine-rate" style="color: var(--success-text);">61.6%</h3>
+              <span class="kpi-trend positive">Verified genuine claims</span>
+            </div>
+            
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <span class="kpi-label">Avg Claim Amount</span>
+                <div class="kpi-icon-wrapper info">
+                  <i data-lucide="dollar-sign"></i>
+                </div>
+              </div>
+              <h3 class="kpi-value" id="an-avg-claim">$68.4K</h3>
+              <span class="kpi-trend positive">Average claim payout</span>
+            </div>
+            
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <span class="kpi-label">Active Model</span>
+                <div class="kpi-icon-wrapper purple">
+                  <i data-lucide="cpu"></i>
+                </div>
+              </div>
+              <h3 class="kpi-value" id="an-accuracy" style="font-size: 1.35rem; color: #C084FC;">Gradient Boost</h3>
+              <span class="kpi-trend positive">94.2% AUC-ROC</span>
+            </div>
           </div>
 
-          <!-- Output Panel -->
-          <div class="predictor-result-panel">
-            <div class="card result-card">
-              <div class="card-header centered">
-                <h4 class="card-title">Risk Assessment Score</h4>
-                <p class="card-subtitle">Real-time fraud classification analysis</p>
-              </div>
-
-              <!-- Model Info Card -->
-              <div class="result-model-badge-card" id="result-model-badge-card">
-                <div class="result-model-badge-inner">
-                  <div class="result-model-icon-wrap">
-                    <i data-lucide="brain-circuit" class="result-model-icon"></i>
-                  </div>
-                  <div class="result-model-info">
-                    <span class="result-model-title">Classification Engine</span>
-                    <strong class="result-model-name" id="result-model-name-text">Gradient Boosting Classifier</strong>
-                  </div>
-                </div>
-                <span class="badge badge-success-light" id="result-model-status-tag">Active Model</span>
+          <!-- Fraud vs Genuine Main Container -->
+          <div class="card" style="padding: 24px; margin-bottom: 24px;">
+            <div class="card-header" style="margin-bottom: 20px;">
+              <h4 class="card-title" style="margin: 0;">
+                <i data-lucide="bar-chart-3" style="color: var(--primary); width: 18px; height: 18px;"></i>
+                Fraud vs Genuine Claims Distribution
+              </h4>
+              <p class="card-subtitle" style="margin: 2px 0 0 0;">Overall breakdown of analyzed claims</p>
+            </div>
+            
+            <div class="analytics-main-split" style="display: flex; gap: 40px; align-items: center; flex-wrap: wrap;">
+              <div class="analytics-chart-area" style="flex: 2; min-width: 280px; height: 260px; position: relative;">
+                <canvas id="chart-analytics-severity" style="width: 100%; height: 100%;"></canvas>
               </div>
               
-              <!-- Circular Gauge -->
-              <div class="gauge-wrapper">
-                <svg class="gauge" viewBox="0 0 200 200">
-                  <circle class="gauge-bg" cx="100" cy="100" r="85"></circle>
-                  <circle class="gauge-fill" id="gauge-fill-ring" cx="100" cy="100" r="85" style="stroke-dasharray: 534; stroke-dashoffset: 534;"></circle>
+              <div class="analytics-summary-side" style="flex: 1; min-width: 240px; display: flex; flex-direction: column; gap: 12px; border-left: 1px solid var(--border-light); padding-left: 24px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-light);">
+                  <span style="font-size: 13px; color: var(--text-secondary);">Total Claims</span>
+                  <strong style="font-size: 16px; color: var(--text-primary);" id="an-total-claims">1,247</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-light);">
+                  <span style="font-size: 13px; color: var(--text-secondary);">Fraudulent Claims</span>
+                  <strong style="font-size: 16px; color: var(--danger-text);" id="an-fraudulent-claims">479</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-light);">
+                  <span style="font-size: 13px; color: var(--text-secondary);">Genuine Claims</span>
+                  <strong style="font-size: 16px; color: var(--success-text);" id="an-genuine-claims">768</strong>
+                </div>
+                
+                <div style="background: var(--primary-light); border-radius: 8px; padding: 12px; border: 1px solid var(--primary-border); display: flex; gap: 8px; margin-top: 8px;">
+                  <i data-lucide="info" style="color: var(--primary); width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px;"></i>
+                  <p style="font-size: 12px; color: var(--text-secondary); margin: 0; line-height: 1.4;" id="an-tip-text">
+                    Fraudulent claims represent approximately 38.4% of all analyzed claims.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Grid of 2x2 Analytics Charts -->
+          <div class="analytics-sub-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+            <!-- Fraud by Vehicle Category -->
+            <div class="card" style="padding: 24px;">
+              <div class="card-header">
+                <h4 class="card-title">
+                  <i data-lucide="car" style="color: var(--primary); width: 16px; height: 16px;"></i>
+                  Fraud by Vehicle Category
+                </h4>
+              </div>
+              <div style="height: 200px; position: relative;">
+                <canvas id="chart-analytics-vehicle"></canvas>
+              </div>
+            </div>
+
+            <!-- Fraud by Accident Site -->
+            <div class="card" style="padding: 24px;">
+              <div class="card-header">
+                <h4 class="card-title">
+                  <i data-lucide="map-pin" style="color: var(--danger-text); width: 16px; height: 16px;"></i>
+                  Fraud by Accident Site
+                </h4>
+              </div>
+              <div style="height: 200px; position: relative;">
+                <canvas id="chart-analytics-site"></canvas>
+              </div>
+            </div>
+
+            <!-- Fraud by Driver Age -->
+            <div class="card" style="padding: 24px;">
+              <div class="card-header">
+                <h4 class="card-title">
+                  <i data-lucide="user" style="color: var(--success-text); width: 16px; height: 16px;"></i>
+                  Fraud by Driver Age
+                </h4>
+              </div>
+              <div style="height: 200px; position: relative;">
+                <canvas id="chart-analytics-age"></canvas>
+              </div>
+            </div>
+
+            <!-- Risk Distribution -->
+            <div class="card" style="padding: 24px;">
+              <div class="card-header">
+                <h4 class="card-title">
+                  <i data-lucide="activity" style="color: #C084FC; width: 16px; height: 16px;"></i>
+                  Risk Distribution
+                </h4>
+              </div>
+              <div style="height: 200px; position: relative;">
+                <canvas id="chart-analytics-risk"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 4: RISK CHECK (CHECK YOUR CLAIM RISK) -->
+        <section id="predictor-tab" class="tab-panel">
+          
+          <div class="card" style="margin-bottom: 20px; padding: 20px 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <h3 style="font-size: 20px; font-weight: 800; color: var(--text-primary); margin-bottom: 4px;">
+                  Check Your Claim Risk
+                </h3>
+                <p style="font-size: 13px; color: var(--text-secondary); margin: 0;">
+                  Enter the claim details below to estimate the risk of insurance fraud in real-time.
+                </p>
+              </div>
+              
+              <!-- Prominent Active Model Chip in Predictor -->
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="badge badge-primary" style="font-size: 12px; padding: 6px 12px;">
+                  <i data-lucide="cpu" style="width: 14px; height: 14px;"></i>
+                  <span id="active-model-type-badge">Model: Gradient Boosting Classifier</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="predictor-layout">
+            <!-- Input Form Panel -->
+            <div class="card predictor-form-card">
+              <form id="predictor-form" class="predictor-form">
+                
+                <!-- Model Selection Dropdown for Instant Switching -->
+                <div class="form-group" style="margin-bottom: 20px;">
+                  <label for="pred-model-select" style="display: flex; align-items: center; justify-content: space-between;">
+                    <span style="display: flex; align-items: center; gap: 6px;">
+                      <i data-lucide="cpu" style="width: 14px; height: 14px; color: var(--primary);"></i>
+                      Select Machine Learning Model
+                    </span>
+                    <span style="font-size: 11px; color: var(--primary); font-weight: 600;">5 Algorithms Available</span>
+                  </label>
+                  <select id="pred-model-select" class="select-input block model-select-highlight">
+                    <option value="Gradient Boosting Classifier" selected>Gradient Boosting Classifier (Champion - Tuned 5-Fold CV)</option>
+                    <option value="Random Forest Classifier">Random Forest Classifier (Ensemble Bagging)</option>
+                    <option value="Logistic Regression">Logistic Regression (Standardized Linear)</option>
+                    <option value="AdaBoost Classifier">AdaBoost Classifier (Adaptive Boosting)</option>
+                    <option value="Decision Tree Classifier">Decision Tree Classifier (max_depth=6)</option>
+                  </select>
+                </div>
+
+                <!-- SECTION 1: CLAIM INFORMATION -->
+                <div style="margin-bottom: 24px;">
+                  <div style="font-size: 13px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                    <i data-lucide="file-text" style="width: 16px; height: 16px;"></i>
+                    1. Claim &amp; Incident Information
+                  </div>
+
+                  <div class="form-group">
+                    <label for="pred-severity">Incident Severity</label>
+                    <select id="pred-severity" class="select-input block">
+                      <option value="Major Damage">Major Damage</option>
+                      <option value="Minor Damage" selected>Minor Damage</option>
+                      <option value="Total Loss">Total Loss</option>
+                      <option value="Trivial Damage">Trivial Damage</option>
+                    </select>
+                  </div>
+
+                  <div class="form-grid">
+                    <div class="form-group">
+                      <label for="pred-collision">Collision Type</label>
+                      <select id="pred-collision" class="select-input block">
+                        <option value="Front Collision" selected>Front Collision</option>
+                        <option value="Rear Collision">Rear Collision</option>
+                        <option value="Side Collision">Side Collision</option>
+                        <option value="?">Unknown / Other</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="pred-vehicles">Vehicles Involved</label>
+                      <select id="pred-vehicles" class="select-input block">
+                        <option value="1" selected>1 Vehicle</option>
+                        <option value="2">2 Vehicles</option>
+                        <option value="3">3 Vehicles</option>
+                        <option value="4">4+ Vehicles</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="pred-hour">Incident Hour (0 - 23): <span id="val-hour" style="color: var(--primary); font-weight: 700;">12:00</span></label>
+                    <input type="range" id="pred-hour" min="0" max="23" value="12" class="slider-input">
+                  </div>
+                </div>
+
+                <!-- SECTION 2: DRIVER INFORMATION -->
+                <div style="margin-bottom: 24px; border-top: 1px solid var(--border-light); padding-top: 18px;">
+                  <div style="font-size: 13px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                    <i data-lucide="user" style="width: 16px; height: 16px;"></i>
+                    2. Driver Information
+                  </div>
+
+                  <div class="form-grid">
+                    <div class="form-group">
+                      <label for="pred-age">Driver Age: <span id="val-age" style="color: var(--primary); font-weight: 700;">35</span></label>
+                      <input type="range" id="pred-age" min="18" max="70" value="35" class="slider-input">
+                    </div>
+
+                    <div class="form-group">
+                      <label for="pred-hobby">Insured Hobby</label>
+                      <select id="pred-hobby" class="select-input block">
+                        <option value="chess">Chess</option>
+                        <option value="yachting">Yachting</option>
+                        <option value="reading" selected>Reading</option>
+                        <option value="skydiving">Skydiving</option>
+                        <option value="cross-fit">Cross-fit</option>
+                        <option value="board-games">Board games</option>
+                        <option value="paintball">Paintball</option>
+                        <option value="camping">Camping</option>
+                        <option value="other">Other Hobbies</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- SECTION 3: FINANCIAL & INCIDENT DETAILS -->
+                <div style="border-top: 1px solid var(--border-light); padding-top: 18px;">
+                  <div style="font-size: 13px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                    <i data-lucide="dollar-sign" style="width: 16px; height: 16px;"></i>
+                    3. Claim Amount &amp; Details
+                  </div>
+
+                  <div class="form-group">
+                    <label for="pred-claim">Total Claim Amount: $<span id="val-claim" style="color: var(--primary); font-weight: 700;">35,000</span></label>
+                    <input type="range" id="pred-claim" min="1000" max="120000" step="1000" value="35000" class="slider-input">
+                  </div>
+
+                  <div class="form-grid">
+                    <div class="form-group">
+                      <label for="pred-witnesses">Witnesses Present</label>
+                      <select id="pred-witnesses" class="select-input block">
+                        <option value="0">0 Witnesses</option>
+                        <option value="1">1 Witness</option>
+                        <option value="2" selected>2 Witnesses</option>
+                        <option value="3">3 Witnesses</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="pred-injuries">Bodily Injuries</label>
+                      <select id="pred-injuries" class="select-input block">
+                        <option value="0">0 Injuries</option>
+                        <option value="1">1 Injury</option>
+                        <option value="2" selected>2 Injuries</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Hidden Model Selection Card Grid for Compatibility -->
+                <div class="model-selection-grid" id="model-selection-cards" style="display: none;">
+                  <div class="model-card selected" data-model="Gradient Boosting Classifier">
+                    <span class="model-title">Gradient Boost</span>
+                  </div>
+                  <div class="model-card" data-model="Random Forest Classifier">
+                    <span class="model-title">Random Forest</span>
+                  </div>
+                  <div class="model-card" data-model="Logistic Regression">
+                    <span class="model-title">Logistic Reg.</span>
+                  </div>
+                </div>
+
+              </form>
+            </div>
+
+            <!-- Output Result Panel -->
+            <div class="predictor-result-panel">
+              <div class="card result-card">
+                <div class="card-header centered" style="width: 100%;">
+                  <h4 class="card-title">Estimated Claim Risk</h4>
+                  <p class="card-subtitle">Real-time fraud risk classification</p>
+                </div>
+
+                <!-- Model Info Card -->
+                <div class="result-model-badge-card" id="result-model-badge-card">
+                  <div class="result-model-badge-inner">
+                    <div class="result-model-icon-wrap">
+                      <i data-lucide="shield-check" class="result-model-icon"></i>
+                    </div>
+                    <div class="result-model-info">
+                      <span class="result-model-title">Active AI Model</span>
+                      <strong class="result-model-name" id="result-model-name-text">Gradient Boosting Classifier</strong>
+                    </div>
+                  </div>
+                  <span class="badge badge-success-light" id="result-model-status-tag">Active</span>
+                </div>
+                
+                <!-- Circular Risk Gauge -->
+                <div class="gauge-wrapper">
+                  <svg class="gauge" viewBox="0 0 200 200">
+                    <circle class="gauge-bg" cx="100" cy="100" r="85"></circle>
+                    <circle class="gauge-fill" id="gauge-fill-ring" cx="100" cy="100" r="85" style="stroke-dasharray: 534; stroke-dashoffset: 534;"></circle>
+                  </svg>
                   <div class="gauge-text-container">
                     <span id="gauge-probability-val">0%</span>
                     <span id="gauge-risk-badge" class="risk-badge badge-success">Low Risk</span>
                   </div>
-                </svg>
-              </div>
+                </div>
 
-              <!-- Risk Drivers -->
-              <div class="risk-drivers-container">
-                <h5>Influencing Factors</h5>
-                <ul class="factor-list" id="predictor-factors-list">
-                  <!-- Filled dynamically -->
-                </ul>
+                <!-- Simple Explanation & Influencing Factors -->
+                <div class="risk-drivers-container">
+                  <h5>
+                    <i data-lucide="help-circle" style="width: 14px; height: 14px; color: var(--primary);"></i>
+                    Why this score? (Key Factors)
+                  </h5>
+                  <ul class="factor-list" id="predictor-factors-list">
+                    <!-- Filled dynamically -->
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <!-- TAB 5: ML MODEL (FRAUD DETECTION COMPREHENSIVE FORM) -->
-      <section id="dataprep-tab" class="tab-panel">
-        <div class="ml-form-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+        <!-- TAB 5: MORE / ML MODEL SPECIFICATIONS -->
+        <section id="dataprep-tab" class="tab-panel">
+          <div class="card" style="margin-bottom: 24px; padding: 22px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+              <div>
+                <span class="badge badge-primary" style="margin-bottom: 6px;">Machine Learning Architecture</span>
+                <h3 style="font-size: 20px; font-weight: 800; color: var(--text-primary); margin: 0;">
+                  Model Information: Gradient Boosting Classifier
+                </h3>
+                <p style="font-size: 13px; color: var(--text-secondary); margin: 4px 0 0 0;">
+                  Gradient Boosting classification engine evaluated across 12,002 vehicle claim records with 5-fold cross-validation.
+                </p>
+              </div>
+              <button type="button" id="btn-ml-check-health" class="btn btn-secondary-outline" style="font-size: 12px;">
+                <i data-lucide="activity" style="width: 14px; height: 14px; color: var(--primary);"></i>
+                <span>Ping Backend</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Model Performance KPIs -->
+          <div class="ml-kpi-grid" style="margin-bottom: 24px;">
+            <div class="ml-kpi-card">
+              <div class="kpi-icon-wrapper info">
+                <i data-lucide="check-circle-2"></i>
+              </div>
+              <div>
+                <div class="ml-kpi-val" id="model-kpi-accuracy">77.7%</div>
+                <div class="ml-kpi-label">Test Set Accuracy</div>
+                <div class="ml-kpi-sub">2,401 evaluated claims</div>
+              </div>
+            </div>
+
+            <div class="ml-kpi-card">
+              <div class="kpi-icon-wrapper success">
+                <i data-lucide="target"></i>
+              </div>
+              <div>
+                <div class="ml-kpi-val" id="model-kpi-precision">84.6%</div>
+                <div class="ml-kpi-label">Fraud Precision</div>
+                <div class="ml-kpi-sub">85% flagged are true fraud</div>
+              </div>
+            </div>
+
+            <div class="ml-kpi-card">
+              <div class="kpi-icon-wrapper warning">
+                <i data-lucide="zap"></i>
+              </div>
+              <div>
+                <div class="ml-kpi-val" id="model-kpi-cv-f1">0.2103</div>
+                <div class="ml-kpi-label">5-Fold CV F1-Score</div>
+                <div class="ml-kpi-sub">Ranked #1 among models</div>
+              </div>
+            </div>
+
+            <div class="ml-kpi-card">
+              <div class="kpi-icon-wrapper danger">
+                <i data-lucide="database"></i>
+              </div>
+              <div>
+                <div class="ml-kpi-val" id="model-kpi-dataset">12,002</div>
+                <div class="ml-kpi-label">Claims Analyzed</div>
+                <div class="ml-kpi-sub">80/20 train-test split</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Model Benchmark & Comparison Card -->
+          <div class="card" style="margin-bottom: 24px; padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <h4 style="margin: 0 0 4px 0; font-size: 16px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+                  <i data-lucide="layers" style="color: var(--primary); width: 18px; height: 18px;"></i>
+                  Candidate Model Comparison
+                </h4>
+                <p class="text-secondary" style="font-size: 12px; margin: 0;">
+                  Evaluated on 12,002 claims using 5-fold Stratified Cross-Validation.
+                </p>
+              </div>
+              <span class="badge badge-success" style="font-size: 11px;">
+                Champion: Gradient Boosting
+              </span>
+            </div>
+
+            <div class="table-container">
+              <table class="data-table" style="font-size: 12px;">
+                <thead>
+                  <tr>
+                    <th>Model Algorithm</th>
+                    <th>Type</th>
+                    <th>Train Accuracy</th>
+                    <th>Test Accuracy</th>
+                    <th>Precision</th>
+                    <th>Recall</th>
+                    <th>F1-Score</th>
+                    <th>Verdict</th>
+                  </tr>
+                </thead>
+                <tbody id="ml-benchmark-tbody">
+                  <tr style="background: var(--primary-light); font-weight: 600;">
+                    <td style="color: var(--primary);">Gradient Boosting Classifier</td>
+                    <td>Ensemble (Boosting)</td>
+                    <td>78.52%</td>
+                    <td>77.68%</td>
+                    <td>84.62%</td>
+                    <td>11.19%</td>
+                    <td>0.1976</td>
+                    <td><span class="badge badge-success">★ Selected Champion</span></td>
+                  </tr>
+                  <tr>
+                    <td>Random Forest Classifier</td>
+                    <td>Ensemble (Bagging)</td>
+                    <td>100.0%</td>
+                    <td>77.76%</td>
+                    <td>90.00%</td>
+                    <td>10.68%</td>
+                    <td>0.1909</td>
+                    <td><span class="badge badge-warning">Overfitting</span></td>
+                  </tr>
+                  <tr>
+                    <td>Logistic Regression</td>
+                    <td>Linear (Standardized)</td>
+                    <td>77.72%</td>
+                    <td>77.59%</td>
+                    <td>84.21%</td>
+                    <td>10.85%</td>
+                    <td>0.1922</td>
+                    <td><span class="badge badge-primary">Good Fit</span></td>
+                  </tr>
+                  <tr>
+                    <td>AdaBoost Classifier</td>
+                    <td>Ensemble (Boosting)</td>
+                    <td>77.93%</td>
+                    <td>77.76%</td>
+                    <td>91.18%</td>
+                    <td>10.51%</td>
+                    <td>0.1884</td>
+                    <td><span class="badge badge-primary">Good Fit</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Model Diagnostics Grid -->
+          <div class="ml-diagnostics-grid" style="margin-bottom: 24px;">
+            <!-- Confusion Matrix -->
+            <div class="card" style="padding: 22px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h4 style="margin: 0; font-size: 15px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+                  <i data-lucide="grid" style="color: var(--primary); width: 16px; height: 16px;"></i>
+                  Confusion Matrix (N = 2,401)
+                </h4>
+                <span style="font-size: 11px; color: var(--text-muted);">Test Set</span>
+              </div>
+
+              <div class="cm-grid">
+                <div class="cm-cell cm-tn">
+                  <span class="cm-count" id="cm-tn-val">1,799</span>
+                  <span class="cm-label">True Negative (TN)</span>
+                  <span class="cm-pct">Non-Fraud Correct (74.9%)</span>
+                </div>
+                <div class="cm-cell cm-fp">
+                  <span class="cm-count" id="cm-fp-val">12</span>
+                  <span class="cm-label">False Positive (FP)</span>
+                  <span class="cm-pct">False Alarms (0.5%)</span>
+                </div>
+                <div class="cm-cell cm-fn">
+                  <span class="cm-count" id="cm-fn-val">524</span>
+                  <span class="cm-label">False Negative (FN)</span>
+                  <span class="cm-pct">Missed Fraud (21.8%)</span>
+                </div>
+                <div class="cm-cell cm-tp">
+                  <span class="cm-count" id="cm-tp-val">66</span>
+                  <span class="cm-label">True Positive (TP)</span>
+                  <span class="cm-pct">Caught Fraud (2.7%)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Feature Importances -->
+            <div class="card" style="padding: 22px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h4 style="margin: 0; font-size: 15px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+                  <i data-lucide="bar-chart" style="color: var(--primary); width: 16px; height: 16px;"></i>
+                  Key Influencing Factors
+                </h4>
+                <span style="font-size: 11px; color: var(--text-muted);">Relative Weights</span>
+              </div>
+
+              <div class="feat-list" id="ml-feature-list">
+                <div class="feat-row">
+                  <div class="feat-row-header">
+                    <span>Annual Income</span>
+                    <span style="color: var(--primary); font-weight: 700;">71.2%</span>
+                  </div>
+                  <div class="feat-bar-bg"><div class="feat-bar-fill" style="width: 71.2%;"></div></div>
+                </div>
+
+                <div class="feat-row">
+                  <div class="feat-row-header">
+                    <span>Injury Claim Amount</span>
+                    <span style="color: var(--primary); font-weight: 700;">5.1%</span>
+                  </div>
+                  <div class="feat-bar-bg"><div class="feat-bar-fill" style="width: 5.1%;"></div></div>
+                </div>
+
+                <div class="feat-row">
+                  <div class="feat-row-header">
+                    <span>Total Claim Amount</span>
+                    <span style="color: var(--primary); font-weight: 700;">3.5%</span>
+                  </div>
+                  <div class="feat-bar-bg"><div class="feat-bar-fill" style="width: 3.5%;"></div></div>
+                </div>
+
+                <div class="feat-row">
+                  <div class="feat-row-header">
+                    <span>ZIP Code Risk Region</span>
+                    <span style="color: var(--primary); font-weight: 700;">3.2%</span>
+                  </div>
+                  <div class="feat-bar-bg"><div class="feat-bar-fill" style="width: 3.2%;"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- Side Drawer for Claims Details -->
+    <div id="details-drawer" class="drawer-overlay">
+      <div class="drawer">
+        <div class="drawer-header">
           <div>
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-              <span class="badge badge-primary-light" style="display: inline-flex; align-items: center; gap: 6px; font-size: 11px;">
-                <i data-lucide="brain" style="width: 12px; height: 12px;"></i> ML MODEL SPECIFICATIONS
-              </span>
-              <span class="ml-server-status-pill" id="ml-backend-status-pill">
-                <span class="status-dot"></span>
-                <span id="ml-backend-status-text">Backend Connected (:8000)</span>
-              </span>
-            </div>
-            <h2 style="font-size: 24px; font-weight: 700; color: #ffffff; margin: 4px 0;">ML Model Architecture & Fraud Intelligence</h2>
-            <p class="text-secondary" style="font-size: 13px; margin: 0; max-width: 800px;">
-              Gradient Boosting classification engine trained on 12,002 claims (42 features). Evaluated with 5-fold Stratified Cross-Validation across 5 algorithms.
-            </p>
+            <h3>Claim Details</h3>
+            <p id="drawer-policy-num" class="text-secondary">Policy # -</p>
           </div>
-          <div style="display: flex; gap: 10px; align-items: center;">
-            <button type="button" id="btn-ml-check-health" class="btn btn-secondary-outline" style="display: flex; align-items: center; gap: 6px; font-size: 12px; padding: 8px 14px;">
-              <i data-lucide="activity" style="width: 14px; height: 14px;"></i>
-              <span>Ping Backend</span>
-            </button>
-          </div>
+          <button id="close-drawer" class="btn-close"><i data-lucide="x"></i></button>
         </div>
-
-        <!-- Model Performance KPIs -->
-        <div class="ml-kpi-grid" style="margin-bottom: 24px;">
-          <div class="ml-kpi-card">
-            <div class="kpi-icon-wrapper info" style="background: rgba(37, 99, 235, 0.1); color: #3b82f6;">
-              <i data-lucide="check-circle-2"></i>
-            </div>
-            <div>
-              <div class="ml-kpi-val" id="model-kpi-accuracy">77.7%</div>
-              <div class="ml-kpi-label">Test Set Accuracy</div>
-              <div class="ml-kpi-sub">2,401 evaluated claims</div>
-            </div>
-          </div>
-
-          <div class="ml-kpi-card">
-            <div class="kpi-icon-wrapper success" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
-              <i data-lucide="target"></i>
-            </div>
-            <div>
-              <div class="ml-kpi-val" id="model-kpi-precision">84.6%</div>
-              <div class="ml-kpi-label">Fraud Precision</div>
-              <div class="ml-kpi-sub">85% flagged are true fraud</div>
-            </div>
-          </div>
-
-          <div class="ml-kpi-card">
-            <div class="kpi-icon-wrapper warning" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
-              <i data-lucide="zap"></i>
-            </div>
-            <div>
-              <div class="ml-kpi-val" id="model-kpi-cv-f1">0.2103</div>
-              <div class="ml-kpi-label">5-Fold CV F1-Score</div>
-              <div class="ml-kpi-sub">Ranked #1 among candidates</div>
-            </div>
-          </div>
-
-          <div class="ml-kpi-card">
-            <div class="kpi-icon-wrapper danger" style="background: rgba(168, 85, 247, 0.1); color: #a855f7;">
-              <i data-lucide="database"></i>
-            </div>
-            <div>
-              <div class="ml-kpi-val" id="model-kpi-dataset">12,002</div>
-              <div class="ml-kpi-label">Claims Analyzed</div>
-              <div class="ml-kpi-sub">42 features | 80/20 split</div>
-            </div>
-          </div>
+        <div class="drawer-body" id="drawer-content">
+          <!-- Rendered dynamically in categories -->
         </div>
-
-        <!-- Model Benchmark & Comparison Card -->
-        <div class="card" style="margin-bottom: 24px; padding: 24px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
-            <div>
-              <h4 style="margin: 0 0 4px 0; font-size: 16px; color: #ffffff; display: flex; align-items: center; gap: 8px;">
-                <i data-lucide="layers" style="color: var(--primary); width: 18px; height: 18px;"></i>
-                Candidate Model Comparison & Cross-Validation Benchmark (Task 5)
-              </h4>
-              <p class="text-secondary" style="font-size: 12px; margin: 0;">
-                All models evaluated on the preprocessed 12,002 dataset with 5-fold Stratified Cross-Validation.
-              </p>
-            </div>
-            <span class="badge badge-success" style="font-size: 11px; padding: 4px 10px;">
-              Champion: Gradient Boosting
-            </span>
-          </div>
-
-          <div class="table-container" style="min-height: auto; overflow-x: auto;">
-            <table class="data-table" style="font-size: 12px;">
-              <thead>
-                <tr>
-                  <th>Model Algorithm</th>
-                  <th>Type</th>
-                  <th>Train Accuracy</th>
-                  <th>Test Accuracy</th>
-                  <th>Precision</th>
-                  <th>Recall</th>
-                  <th>F1-Score</th>
-                  <th>5-Fold CV F1</th>
-                  <th>Evaluation Verdict</th>
-                </tr>
-              </thead>
-              <tbody id="ml-benchmark-tbody">
-                <tr style="background: rgba(37, 99, 235, 0.08); font-weight: 600;">
-                  <td style="color: #60a5fa;">Gradient Boosting Classifier</td>
-                  <td>Ensemble (Boosting)</td>
-                  <td>78.52%</td>
-                  <td>77.68%</td>
-                  <td>84.62%</td>
-                  <td>11.19%</td>
-                  <td>0.1976</td>
-                  <td style="color: #10b981;">0.2103 ± 0.0247</td>
-                  <td><span class="badge badge-success">★ Selected Best</span></td>
-                </tr>
-                <tr>
-                  <td>Random Forest Classifier</td>
-                  <td>Ensemble (Bagging)</td>
-                  <td>100.0%</td>
-                  <td>77.76%</td>
-                  <td>90.00%</td>
-                  <td>10.68%</td>
-                  <td>0.1909</td>
-                  <td>0.2085 ± 0.0220</td>
-                  <td><span class="badge badge-warning">Overfitting</span></td>
-                </tr>
-                <tr>
-                  <td>Logistic Regression</td>
-                  <td>Linear (Standardized)</td>
-                  <td>77.72%</td>
-                  <td>77.59%</td>
-                  <td>84.21%</td>
-                  <td>10.85%</td>
-                  <td>0.1922</td>
-                  <td>0.2077 ± 0.0195</td>
-                  <td><span class="badge badge-primary-light" style="color: #60a5fa;">Good Fit</span></td>
-                </tr>
-                <tr>
-                  <td>AdaBoost Classifier</td>
-                  <td>Ensemble (Boosting)</td>
-                  <td>77.93%</td>
-                  <td>77.76%</td>
-                  <td>91.18%</td>
-                  <td>10.51%</td>
-                  <td>0.1884</td>
-                  <td>0.2026 ± 0.0206</td>
-                  <td><span class="badge badge-primary-light" style="color: #60a5fa;">Good Fit</span></td>
-                </tr>
-                <tr>
-                  <td>Decision Tree Classifier</td>
-                  <td>Tree (max_depth=6)</td>
-                  <td>78.48%</td>
-                  <td>77.43%</td>
-                  <td>85.29%</td>
-                  <td>9.83%</td>
-                  <td>0.1763</td>
-                  <td>0.2034 ± 0.0210</td>
-                  <td><span class="badge badge-primary-light" style="color: #60a5fa;">Good Fit</span></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Model Diagnostics Grid -->
-        <div class="ml-diagnostics-grid" style="margin-bottom: 24px;">
-          <!-- Confusion Matrix & Tuning -->
-          <div class="card" style="padding: 22px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <h4 style="margin: 0; font-size: 15px; color: #ffffff; display: flex; align-items: center; gap: 8px;">
-                <i data-lucide="grid" style="color: var(--primary); width: 16px; height: 16px;"></i>
-                Confusion Matrix (Test Set: N = 2,401)
-              </h4>
-              <span style="font-size: 11px; color: var(--text-muted);">80/20 Stratified Split</span>
-            </div>
-
-            <div class="cm-grid">
-              <div class="cm-cell cm-tn">
-                <span class="cm-count" id="cm-tn-val">1,799</span>
-                <span class="cm-label">True Negative (TN)</span>
-                <span class="cm-pct">Non-Fraud Correctly Identified (74.9%)</span>
-              </div>
-              <div class="cm-cell cm-fp">
-                <span class="cm-count" id="cm-fp-val">12</span>
-                <span class="cm-label">False Positive (FP)</span>
-                <span class="cm-pct">False Alarms (Ultra-Low 0.5%)</span>
-              </div>
-              <div class="cm-cell cm-fn">
-                <span class="cm-count" id="cm-fn-val">524</span>
-                <span class="cm-label">False Negative (FN)</span>
-                <span class="cm-pct">Unflagged Fraud (21.8%)</span>
-              </div>
-              <div class="cm-cell cm-tp">
-                <span class="cm-count" id="cm-tp-val">66</span>
-                <span class="cm-label">True Positive (TP)</span>
-                <span class="cm-pct">Fraud Correctly Detected (2.7%)</span>
-              </div>
-            </div>
-
-            <!-- Hyperparameter Tuning Specs -->
-            <div style="margin-top: 16px; padding: 12px; background: var(--bg-tertiary); border-radius: var(--border-radius-sm); border: 1px solid var(--border-color); font-size: 11px;">
-              <div style="font-weight: 700; color: #ffffff; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
-                <i data-lucide="sliders" style="width: 12px; height: 12px; color: var(--primary);"></i>
-                Tuned Hyperparameters (GridSearchCV 5-Fold)
-              </div>
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; color: var(--text-secondary);">
-                <div>Estimator: <strong style="color: #ffffff;">GradientBoosting</strong></div>
-                <div>Learning Rate: <strong style="color: #ffffff;">0.1</strong></div>
-                <div>Number of Trees: <strong style="color: #ffffff;">100</strong></div>
-                <div>Max Tree Depth: <strong style="color: #ffffff;">3</strong></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Feature Importances -->
-          <div class="card" style="padding: 22px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <h4 style="margin: 0; font-size: 15px; color: #ffffff; display: flex; align-items: center; gap: 8px;">
-                <i data-lucide="bar-chart" style="color: var(--primary); width: 16px; height: 16px;"></i>
-                Top Predictive Risk Drivers (Feature Importance)
-              </h4>
-              <span style="font-size: 11px; color: var(--text-muted);">Relative Weights</span>
-            </div>
-
-            <div class="feat-list" id="ml-feature-list">
-              <div class="feat-row">
-                <div class="feat-row-header">
-                  <span>Annual Income</span>
-                  <span style="color: #60a5fa;">71.2%</span>
-                </div>
-                <div class="feat-bar-bg"><div class="feat-bar-fill" style="width: 71.2%;"></div></div>
-              </div>
-
-              <div class="feat-row">
-                <div class="feat-row-header">
-                  <span>Injury Claim Amount</span>
-                  <span style="color: #60a5fa;">5.1%</span>
-                </div>
-                <div class="feat-bar-bg"><div class="feat-bar-fill" style="width: 5.1%;"></div></div>
-              </div>
-
-              <div class="feat-row">
-                <div class="feat-row-header">
-                  <span>Total Claim Amount</span>
-                  <span style="color: #60a5fa;">3.5%</span>
-                </div>
-                <div class="feat-bar-bg"><div class="feat-bar-fill" style="width: 3.5%;"></div></div>
-              </div>
-
-              <div class="feat-row">
-                <div class="feat-row-header">
-                  <span>ZIP Code Risk Region</span>
-                  <span style="color: #60a5fa;">3.2%</span>
-                </div>
-                <div class="feat-bar-bg"><div class="feat-bar-fill" style="width: 3.2%;"></div></div>
-              </div>
-
-              <div class="feat-row">
-                <div class="feat-row-header">
-                  <span>Days Open Before Filing</span>
-                  <span style="color: #60a5fa;">2.8%</span>
-                </div>
-                <div class="feat-bar-bg"><div class="feat-bar-fill" style="width: 2.8%;"></div></div>
-              </div>
-
-              <div class="feat-row">
-                <div class="feat-row-header">
-                  <span>Age of Driver</span>
-                  <span style="color: #60a5fa;">2.5%</span>
-                </div>
-                <div class="feat-bar-bg"><div class="feat-bar-fill" style="width: 2.5%;"></div></div>
-              </div>
-
-              <div class="feat-row">
-                <div class="feat-row-header">
-                  <span>Safety Rating</span>
-                  <span style="color: #60a5fa;">2.5%</span>
-                </div>
-                <div class="feat-bar-bg"><div class="feat-bar-fill" style="width: 2.5%;"></div></div>
-              </div>
-
-              <div class="feat-row">
-                <div class="feat-row-header">
-                  <span>Vehicle Market Price</span>
-                  <span style="color: #60a5fa;">2.3%</span>
-                </div>
-                <div class="feat-bar-bg"><div class="feat-bar-fill" style="width: 2.3%;"></div></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-    </div>
-  </main>
-
-  <!-- Side Drawer for Claims Details -->
-  <div id="details-drawer" class="drawer-overlay">
-    <div class="drawer">
-      <div class="drawer-header">
-        <div>
-          <h3>Claim Details</h3>
-          <p id="drawer-policy-num" class="text-secondary">Policy # -</p>
-        </div>
-        <button id="close-drawer" class="btn-close"><i data-lucide="x"></i></button>
-      </div>
-      <div class="drawer-body" id="drawer-content">
-        <!-- Rendered dynamically in categories -->
       </div>
     </div>
-  </div>
+
+    <!-- Mobile Bottom Navigation Bar -->
+    <nav class="mobile-bottom-nav">
+      <a href="#" class="mobile-bottom-nav-item active" data-tab="overview">
+        <i data-lucide="layout-dashboard"></i>
+        <span>Home</span>
+      </a>
+      <a href="#" class="mobile-bottom-nav-item" data-tab="explorer">
+        <i data-lucide="file-text"></i>
+        <span>Claims</span>
+      </a>
+      <a href="#" class="mobile-bottom-nav-item" data-tab="predictor">
+        <i data-lucide="shield-alert"></i>
+        <span>Risk Check</span>
+      </a>
+      <a href="#" class="mobile-bottom-nav-item" data-tab="analytics">
+        <i data-lucide="bar-chart-2"></i>
+        <span>Analytics</span>
+      </a>
+      <a href="#" class="mobile-bottom-nav-item" data-tab="dataprep">
+        <i data-lucide="cpu"></i>
+        <span>Model</span>
+      </a>
+    </nav>
 
   </div>
 
   <!-- JavaScript Modules -->
-  <!-- Loaded default dataset array -->
   <script src="data/insurance_claims_json.js"></script>
-  <!-- Main Logic -->
   <script src="app.js"></script>
 </body>
 </html>
